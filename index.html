@@ -1,355 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiquidShare | File Upload</title>
-    <link rel="icon" type="image/svg+xml" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/cloud-upload.svg">
-    <style>
-        /* Background Animation */
-        body {
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-            background: linear-gradient(135deg, #181f2a 0%, #3e4a61 100%);
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiquidShare | iOS Glass Upload</title>
+  <link rel="apple-touch-icon" href="https://img.icons8.com/ios-filled/50/ffffff/cloud-upload.png">
+  <style>
+    /* iOS 17+ Liquid Glass Blobs */
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(120deg, #181f2a 0%, #323a4d 100%);
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .bg-animated {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: moveBlobs 18s infinite alternate;
-        }
-        .blob1 { background: #53ffee; width: 400px; height: 400px; top: 5%; left: -10%; animation-delay: 0s;}
-        .blob2 { background: #8e6dff; width: 350px; height: 350px; top: 60%; left: 70%; animation-delay: 3s;}
-        .blob3 { background: #ffb86b; width: 250px; height: 250px; top: 45%; left: 10%; animation-delay: 6s;}
-        @keyframes moveBlobs {
-            0% { transform: scale(1) translateY(0px);}
-            100% { transform: scale(1.15) translateY(-30px);}
-        }
+    .liquid-bg {
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .liquid-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(56px) saturate(140%);
+      opacity: 0.53;
+      mix-blend-mode: lighten;
+      transition: filter 0.5s;
+      animation: floatLiquid 23s ease-in-out infinite alternate;
+    }
+    .blob1 {
+      background: radial-gradient(circle at 30% 30%, #0ff1fa 50%, #53ffee 90%, transparent 100%);
+      width: 420px; height: 420px; top: 4%; left: -10%; animation-delay: 0s;
+    }
+    .blob2 {
+      background: radial-gradient(circle at 80% 20%, #c972f8 30%, #8e6dff 80%, transparent 100%);
+      width: 370px; height: 370px; bottom: 45%; right: 0%; animation-delay: 6s;
+    }
+    .blob3 {
+      background: radial-gradient(circle at 50% 80%, #ffb86b 20%, #ffe7b0 80%, transparent 100%);
+      width: 270px; height: 270px; bottom: -8%; left: 13%; animation-delay: 13s;
+    }
+    @keyframes floatLiquid {
+      0% { transform: scale(1) translateY(0px);}
+      100% { transform: scale(1.15) translateY(-36px);}
+    }
 
-        /* Glass Panel */
-        .container {
-            z-index: 2;
-            width: 100%;
-            max-width: 430px;
-            padding: 2.4rem 2rem 2.2rem 2rem;
-            background: rgba(28, 32, 44, 0.78);
-            border-radius: 28px;
-            border: 2px solid rgba(255,255,255,0.16);
-            box-shadow: 0 10px 36px 0 rgba(36,37,38,.22), 0 1.5px 6px 0 rgba(0,0,0,0.10);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            color: #f8fafd;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+    /* iOS Glass Panel */
+    .container {
+      z-index: 1;
+      width: 100%;
+      max-width: 410px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 32px;
+      box-shadow:
+        0 4px 32px 0 rgba(0,0,0,0.15),
+        0 0.5px 2px 0 rgba(140,180,255,0.10) inset;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(30px) saturate(140%);
+      -webkit-backdrop-filter: blur(30px) saturate(140%);
+      padding: 2.6rem 2.2rem 2.2rem 2.2rem;
+      color: #f8fafd;
+      text-align: center;
+      position: relative;
+      overflow: visible;
+      margin: 38px 0;
+      transition: box-shadow 0.28s;
+    }
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(120deg, rgba(255,255,255,0.13) 0%, rgba(83,255,238,0.12) 90%);
+      z-index: 0;
+      opacity: .85;
+    }
 
-        /* Header */
-        .logo-circle {
-            background: linear-gradient(135deg, #53ffee 20%, #8e6dff 80%);
-            width: 60px; height: 60px;
-            margin: 0 auto 1rem auto;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 16px 0 rgba(83,255,238,0.14);
-            font-size: 2rem;
-        }
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-            letter-spacing: 0.01em;
-            font-family: 'Segoe UI Semibold', 'Roboto', Arial, sans-serif;
-        }
-        .subtitle {
-            opacity: 0.92;
-            font-weight: 400;
-            margin-bottom: 2rem;
-            color: #c1c9f5;
-        }
+    /* iOS Glass Shine */
+    .container::after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      left: -24px; right: -24px; top: -24px; bottom: -24px;
+      border-radius: 38px;
+      background: linear-gradient(130deg, rgba(255,255,255,0.13) 25%, transparent 100%);
+      z-index: 1;
+      filter: blur(16px);
+      opacity: 0.7;
+    }
 
-        /* Upload Area */
-        .upload-area {
-            border: 2.5px dashed #7b89c2;
-            background: rgba(40, 44, 60, .37);
-            border-radius: 16px;
-            padding: 2.2rem 1.2rem;
-            cursor: pointer;
-            transition: border-color 0.23s, background 0.23s;
-            margin-bottom: 1.6rem;
-            position: relative;
-            min-height: 110px;
-        }
-        .upload-area.active {
-            border-color: #53ffee;
-            background: rgba(83, 255, 238, 0.08);
-        }
-        .upload-icon {
-            font-size: 2.6rem;
-            margin-bottom: 0.5rem;
-            color: #53ffee;
-            transition: color .3s;
-        }
-        .upload-area.active .upload-icon { color: #8e6dff; }
+    /* Header & Logo */
+    .logo-circle {
+      background: linear-gradient(145deg, #53ffee 40%, #8e6dff 100%);
+      width: 66px; height: 66px;
+      margin: 0 auto 1.1rem auto;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 22px 0 rgba(83,255,238,0.21);
+      font-size: 2.5rem;
+      position: relative;
+      z-index: 3;
+      border: 2.5px solid rgba(255,255,255,0.30);
+      overflow: hidden;
+    }
+    .logo-circle svg {
+      width: 38px; height: 38px;
+      display: block;
+    }
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 0.19rem;
+      letter-spacing: 0.01em;
+      font-family: 'SF Pro Display', 'Segoe UI Semibold', 'Roboto', Arial, sans-serif;
+      background: linear-gradient(90deg, #53ffee 15%, #8e6dff 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      opacity: 0.93;
+      font-weight: 400;
+      margin-bottom: 2.1rem;
+      color: #e1eafc;
+      font-size: 1.08rem;
+      letter-spacing: 0.01em;
+    }
 
-        /* File Preview */
-        .file-preview {
-            display: none;
-            margin-top: 1rem;
-        }
-        .file-preview img {
-            max-width: 88%;
-            max-height: 170px;
-            border-radius: 10px;
-            margin-bottom: 0.6rem;
-            box-shadow: 0 1.5px 8px 0 rgba(0,0,0,0.10);
-        }
-        .file-preview p {
-            color: #ffe7b0;
-            font-size: 1.05rem;
-        }
+    /* Upload Area */
+    .upload-area {
+      border: 2.3px dashed #7b89c2;
+      background: rgba(40, 44, 60, .28);
+      border-radius: 17px;
+      padding: 2.1rem 1.2rem;
+      min-height: 110px;
+      cursor: pointer;
+      transition: border-color 0.23s, background 0.23s, box-shadow .18s;
+      margin-bottom: 1.55rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1.5px 9px 0 rgba(83,255,238,0.08);
+    }
+    .upload-area.active {
+      border-color: #53ffee;
+      background: rgba(83, 255, 238, 0.13);
+      box-shadow: 0 4px 32px 0 rgba(83,255,238,0.09);
+    }
+    .upload-icon {
+      font-size: 2.7rem;
+      margin-bottom: 0.44rem;
+      color: #53ffee;
+      transition: color .3s;
+      filter: drop-shadow(0 1px 7px #53ffee44);
+    }
+    .upload-area.active .upload-icon { color: #8e6dff; }
 
-        /* Upload Button */
-        .btn {
-            background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
-            color: #23273a;
-            border: none;
-            padding: 0.85rem 1.85rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: box-shadow .18s, background .18s, filter .18s;
-            margin: 0.7rem 0 0.2rem 0;
-            box-shadow: 0 1.5px 9px 0 rgba(83,255,238,0.09);
-            letter-spacing: 0.01em;
-            filter: brightness(0.97);
-        }
-        .btn:active {
-            filter: brightness(0.93);
-        }
-        .btn[disabled] {
-            opacity: 0.6;
-            pointer-events: none;
-        }
+    /* File Preview */
+    .file-preview {
+      display: none;
+      margin-top: 1rem;
+      z-index: 4;
+      position: relative;
+    }
+    .file-preview img {
+      max-width: 88%;
+      max-height: 175px;
+      border-radius: 13px;
+      margin-bottom: 0.49rem;
+      box-shadow: 0 1.5px 8px 0 rgba(0,0,0,0.08);
+    }
+    .file-preview p {
+      color: #ffe7b0;
+      font-size: 1.08rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
 
-        /* File Link */
-        .file-link {
-            display: none;
-            margin-top: 1.6rem;
-            background: rgba(48, 54, 80, 0.34);
-            padding: 1.1rem 0.7rem;
-            border-radius: 11px;
-            word-break: break-all;
-            border: 1.5px solid #53ffee44;
-            box-shadow: 0 1.5px 12px 0 rgba(83,255,238,0.14);
-        }
-        .file-link a {
-            color: #53ffee;
-            text-decoration: none;
-            font-weight: 500;
-            word-break: break-all;
-        }
-        .file-link a:hover { text-decoration: underline; }
+    /* Upload Button */
+    .btn {
+      background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
+      color: #23273a;
+      border: none;
+      padding: 0.93rem 2.2rem;
+      border-radius: 50px;
+      font-size: 1.14rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: box-shadow .22s, background .18s, filter .18s;
+      margin: 0.8rem 0 0.32rem 0;
+      box-shadow: 0 2.5px 18px 0 rgba(83,255,238,0.10);
+      letter-spacing: 0.01em;
+      filter: brightness(0.97);
+      position: relative;
+      z-index: 5;
+    }
+    .btn:active {
+      filter: brightness(0.92);
+    }
+    .btn[disabled] {
+      opacity: 0.65;
+      pointer-events: none;
+      filter: grayscale(0.4);
+    }
 
-        /* Copy Button */
-        .copy-btn {
-            background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
-            color: #23273a;
-            border: none;
-            padding: 0.42rem 1rem;
-            border-radius: 7px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            margin-left: 0.7rem;
-            font-weight: 500;
-            transition: filter .18s;
-            filter: brightness(0.97);
-        }
-        .copy-btn:active {
-            filter: brightness(0.9);
-        }
+    /* File Link */
+    .file-link {
+      display: none;
+      margin-top: 1.7rem;
+      background: rgba(48, 54, 80, 0.23);
+      padding: 1.1rem 0.7rem;
+      border-radius: 13px;
+      word-break: break-all;
+      border: 1.5px solid #53ffee44;
+      box-shadow: 0 1.5px 12px 0 rgba(83,255,238,0.13);
+      position: relative;
+      z-index: 4;
+    }
+    .file-link a {
+      color: #53ffee;
+      text-decoration: none;
+      font-weight: 500;
+      word-break: break-all;
+      font-size: 1.05rem;
+      letter-spacing: 0.01em;
+    }
+    .file-link a:hover { text-decoration: underline; }
 
-        /* Support Section */
-        .support-section {
-            margin-top: 2.2rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.14);
-        }
-        .support-btn {
-            display: inline-block;
-            background: rgba(83,255,238,0.13);
-            color: #53ffee;
-            padding: 0.5rem 1.1rem;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 500;
-            margin: 0.25rem 0.8rem 0 0;
-            transition: background .2s, color .2s;
-            border: 1px solid #53ffee44;
-            font-size: 1.01rem;
-        }
-        .support-btn:hover {
-            background: #53ffee;
-            color: #181f2a;
-        }
+    /* Copy Button */
+    .copy-btn {
+      background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
+      color: #23273a;
+      border: none;
+      padding: 0.45rem 1.13rem;
+      border-radius: 7px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: 0.7rem;
+      font-weight: 500;
+      transition: filter .14s;
+      filter: brightness(0.97);
+      box-shadow: 0 1.5px 7px 0 rgba(83,255,238,0.06);
+    }
+    .copy-btn:active {
+      filter: brightness(0.9);
+    }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .container { max-width: 98vw; padding: 1.2rem 0.6rem 1.1rem 0.6rem; }
-            .file-preview img { max-width: 100%; }
-        }
-    </style>
+    /* Support Section */
+    .support-section {
+      margin-top: 2.4rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+      position: relative;
+      z-index: 2;
+    }
+    .support-btn {
+      display: inline-block;
+      background: rgba(83,255,238,0.10);
+      color: #53ffee;
+      padding: 0.52rem 1.15rem;
+      border-radius: 40px;
+      text-decoration: none;
+      font-weight: 500;
+      margin: 0.28rem 0.7rem 0 0;
+      transition: background .18s, color .22s;
+      border: 1px solid #53ffee33;
+      font-size: 1.01rem;
+      letter-spacing: 0.01em;
+    }
+    .support-btn:hover {
+      background: #53ffee;
+      color: #181f2a;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container { max-width: 99vw; padding: 1.4rem 0.5rem 1.1rem 0.5rem; }
+      .file-preview img { max-width: 100%; }
+    }
+    ::selection { background: #53ffee44; }
+  </style>
 </head>
 <body>
-    <div class="bg-animated">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-        <div class="blob blob3"></div>
+  <div class="liquid-bg">
+    <div class="liquid-blob blob1"></div>
+    <div class="liquid-blob blob2"></div>
+    <div class="liquid-blob blob3"></div>
+  </div>
+  <div class="container">
+    <div class="logo-circle">
+      <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><path fill="#23273a" fill-opacity=".83" d="M12 4a7 7 0 00-7 7c0 2.75 2.25 5.38 6.25 8.4a.75.75 0 00.9 0C16.75 16.38 19 13.75 19 11a7 7 0 00-7-7zm0 14.32C7.42 15.02 5 12.64 5 11a7 7 0 1114 0c0 1.64-2.42 4.02-7 7.32z"/><path fill="#53ffee" d="M12 13.75a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/></svg>
     </div>
-    <div class="container">
-        <div class="logo-circle">
-            <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="#23273a" fill-opacity=".82" d="M12 4a7 7 0 00-7 7c0 2.75 2.25 5.38 6.25 8.4a.75.75 0 00.9 0C16.75 16.38 19 13.75 19 11a7 7 0 00-7-7zm0 14.32C7.42 15.02 5 12.64 5 11a7 7 0 1114 0c0 1.64-2.42 4.02-7 7.32z"/><path fill="#53ffee" d="M12 13.75a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/></svg>
-        </div>
-        <h1>LiquidShare</h1>
-        <p class="subtitle">Upload files up to <b>200MB</b> – Fast, Free & Beautiful</p>
+    <h1>LiquidShare</h1>
+    <p class="subtitle">iOS Glass Uploads &mdash; <b>200MB</b> max file</p>
 
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📤</div>
-            <p><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select your file</p>
-            <input type="file" id="fileInput" style="display: none;">
-        </div>
-
-        <button class="btn" id="uploadBtn">Upload File</button>
-
-        <div class="file-preview" id="filePreview">
-            <img id="previewImage" src="" alt="Preview">
-            <p id="fileName"></p>
-        </div>
-
-        <div class="file-link" id="fileLink">
-            <p style="margin-bottom: 0.3rem; color: #53ffee;">Your file link:</p>
-            <div style="display: flex; align-items: center; justify-content: center;">
-                <a id="generatedLink" href="#" target="_blank"></a>
-                <button class="copy-btn" id="copyBtn" title="Copy link">Copy</button>
-            </div>
-        </div>
-
-        <div class="support-section">
-            <p style="color: #c1c9f5; margin-bottom: 0.3rem;">Support Channels</p>
-            <a href="https://t.me/ALL1N_0NE/109" class="support-btn" target="_blank">Join Telegram 1</a>
-            <a href="http://t.me/combohamserdailys" class="support-btn" target="_blank">Join Telegram 2</a>
-        </div>
+    <div class="upload-area" id="uploadArea">
+      <div class="upload-icon">📤</div>
+      <p>
+        <span style="color: #53ffee;">Tap</span>
+        or
+        <span style="color: #8e6dff;">Drag & Drop</span>
+        to select your file
+      </p>
+      <input type="file" id="fileInput" style="display: none;">
     </div>
 
-    <script>
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const filePreview = document.getElementById('filePreview');
-        const previewImage = document.getElementById('previewImage');
-        const fileName = document.getElementById('fileName');
-        const fileLink = document.getElementById('fileLink');
-        const generatedLink = document.getElementById('generatedLink');
-        const copyBtn = document.getElementById('copyBtn');
+    <button class="btn" id="uploadBtn">Upload File</button>
 
-        // Drag & Drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('active');
-        });
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('active');
-        });
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('active');
-            if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                showFilePreview();
-            }
-        });
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length) {
-                showFilePreview();
-            }
-        });
+    <div class="file-preview" id="filePreview">
+      <img id="previewImage" src="" alt="Preview">
+      <p id="fileName"></p>
+    </div>
 
-        // Upload Button
-        uploadBtn.addEventListener('click', () => {
-            if (fileInput.files.length) {
-                uploadFile();
-            } else {
-                alert('Please select a file first!');
-            }
-        });
+    <div class="file-link" id="fileLink">
+      <p style="margin-bottom: 0.3rem; color: #53ffee;">Your file link:</p>
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <a id="generatedLink" href="#" target="_blank"></a>
+        <button class="copy-btn" id="copyBtn" title="Copy link">Copy</button>
+      </div>
+    </div>
 
-        // Copy Button
-        copyBtn.addEventListener('click', () => {
-            const link = generatedLink.href;
-            navigator.clipboard.writeText(link).then(() => {
-                copyBtn.textContent = 'Copied!';
-                setTimeout(() => {
-                    copyBtn.textContent = 'Copy';
-                }, 1800);
-            });
-        });
+    <div class="support-section">
+      <p style="color: #c1c9f5; margin-bottom: 0.3rem;">Support Channels</p>
+      <a href="https://t.me/ALL1N_0NE/109" class="support-btn" target="_blank">Join Telegram 1</a>
+      <a href="http://t.me/combohamserdailys" class="support-btn" target="_blank">Join Telegram 2</a>
+    </div>
+  </div>
+  <script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const filePreview = document.getElementById('filePreview');
+    const previewImage = document.getElementById('previewImage');
+    const fileName = document.getElementById('fileName');
+    const fileLink = document.getElementById('fileLink');
+    const generatedLink = document.getElementById('generatedLink');
+    const copyBtn = document.getElementById('copyBtn');
 
-        // Show File Preview
-        function showFilePreview() {
-            const file = fileInput.files[0];
-            fileName.textContent = file.name;
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    previewImage.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-                filePreview.style.display = 'block';
-            } else {
-                filePreview.style.display = 'none';
-            }
-        }
+    // Drag & Drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('active');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('active');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('active');
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        showFilePreview();
+      }
+    });
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        showFilePreview();
+      }
+    });
 
-        // Simulated Upload (replace with real backend logic)
-        function uploadFile() {
-            uploadBtn.textContent = 'Uploading...';
-            uploadBtn.disabled = true;
+    // Upload Button
+    uploadBtn.addEventListener('click', () => {
+      if (fileInput.files.length) {
+        uploadFile();
+      } else {
+        alert('Please select a file first!');
+      }
+    });
 
-            setTimeout(() => {
-                uploadBtn.textContent = 'Upload File';
-                uploadBtn.disabled = false;
+    // Copy Button
+    copyBtn.addEventListener('click', () => {
+      const link = generatedLink.href;
+      navigator.clipboard.writeText(link).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+        }, 1800);
+      });
+    });
 
-                const randomId = Math.random().toString(36).substring(2, 10);
-                const fileExt = fileInput.files[0].name.split('.').pop();
-                const fileUrl = `https://files.liquidshare.example/${randomId}.${fileExt}`;
+    // Show File Preview
+    function showFilePreview() {
+      const file = fileInput.files[0];
+      fileName.textContent = file.name;
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        filePreview.style.display = 'block';
+      } else {
+        filePreview.style.display = 'none';
+      }
+    }
 
-                generatedLink.textContent = fileUrl;
-                generatedLink.href = fileUrl;
-                fileLink.style.display = 'block';
-                fileLink.scrollIntoView({ behavior: 'smooth' });
-            }, 1500);
-        }
-    </script>
+    // Simulated Upload (replace with real backend logic)
+    function uploadFile() {
+      uploadBtn.textContent = 'Uploading...';
+      uploadBtn.disabled = true;
+      setTimeout(() => {
+        uploadBtn.textContent = 'Upload File';
+        uploadBtn.disabled = false;
+        const randomId = Math.random().toString(36).substring(2, 10);
+        const fileExt = fileInput.files[0].name.split('.').pop();
+        const fileUrl = `https://files.liquidshare.example/${randomId}.${fileExt}`;
+        generatedLink.textContent = fileUrl;
+        generatedLink.href = fileUrl;
+        fileLink.style.display = 'block';
+        fileLink.scrollIntoView({ behavior: 'smooth' });
+      }, 1500);
+    }
+  </script>
 </body>
 </html>
