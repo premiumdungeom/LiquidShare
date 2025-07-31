@@ -3,424 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LiquidShare | iOS Glass Upload</title>
-  <link rel="apple-touch-icon" href="https://img.icons8.com/ios-filled/50/ffffff/cloud-upload.png">
+  <title>iOS Focus Mode Overlay Demo</title>
   <style>
-    /* iOS 17+ Liquid Glass Blobs */
     body {
       min-height: 100vh;
       margin: 0;
-      background: linear-gradient(120deg, #181f2a 0%, #323a4d 100%);
-      overflow-x: hidden;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .liquid-bg {
-      pointer-events: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: 0;
       overflow: hidden;
     }
-    .liquid-blob {
+    .glass-overlay {
       position: absolute;
-      border-radius: 50%;
-      filter: blur(56px) saturate(140%);
-      opacity: 0.53;
-      mix-blend-mode: lighten;
-      transition: filter 0.5s;
-      animation: floatLiquid 23s ease-in-out infinite alternate;
-    }
-    .blob1 {
-      background: radial-gradient(circle at 30% 30%, #0ff1fa 50%, #53ffee 90%, transparent 100%);
-      width: 420px; height: 420px; top: 4%; left: -10%; animation-delay: 0s;
-    }
-    .blob2 {
-      background: radial-gradient(circle at 80% 20%, #c972f8 30%, #8e6dff 80%, transparent 100%);
-      width: 370px; height: 370px; bottom: 45%; right: 0%; animation-delay: 6s;
-    }
-    .blob3 {
-      background: radial-gradient(circle at 50% 80%, #ffb86b 20%, #ffe7b0 80%, transparent 100%);
-      width: 270px; height: 270px; bottom: -8%; left: 13%; animation-delay: 13s;
-    }
-    @keyframes floatLiquid {
-      0% { transform: scale(1) translateY(0px);}
-      100% { transform: scale(1.15) translateY(-36px);}
-    }
-
-    /* iOS Glass Panel */
-    .container {
+      inset: 0;
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(22px) saturate(1.5);
+      -webkit-backdrop-filter: blur(22px) saturate(1.5);
       z-index: 1;
-      width: 100%;
-      max-width: 410px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 32px;
-      box-shadow:
-        0 4px 32px 0 rgba(0,0,0,0.15),
-        0 0.5px 2px 0 rgba(140,180,255,0.10) inset;
-      border: 1.5px solid rgba(255,255,255,0.22);
-      backdrop-filter: blur(30px) saturate(140%);
-      -webkit-backdrop-filter: blur(30px) saturate(140%);
-      padding: 2.6rem 2.2rem 2.2rem 2.2rem;
-      color: #f8fafd;
-      text-align: center;
-      position: relative;
-      overflow: visible;
-      margin: 38px 0;
-      transition: box-shadow 0.28s;
-    }
-    .container::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: inherit;
       pointer-events: none;
-      background: linear-gradient(120deg, rgba(255,255,255,0.13) 0%, rgba(83,255,238,0.12) 90%);
-      z-index: 0;
-      opacity: .85;
     }
-
-    /* iOS Glass Shine */
-    .container::after {
-      content: '';
-      pointer-events: none;
-      position: absolute;
-      left: -24px; right: -24px; top: -24px; bottom: -24px;
-      border-radius: 38px;
-      background: linear-gradient(130deg, rgba(255,255,255,0.13) 25%, transparent 100%);
-      z-index: 1;
-      filter: blur(16px);
-      opacity: 0.7;
-    }
-
-    /* Header & Logo */
-    .logo-circle {
-      background: linear-gradient(145deg, #53ffee 40%, #8e6dff 100%);
-      width: 66px; height: 66px;
-      margin: 0 auto 1.1rem auto;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 22px 0 rgba(83,255,238,0.21);
-      font-size: 2.5rem;
-      position: relative;
-      z-index: 3;
-      border: 2.5px solid rgba(255,255,255,0.30);
-      overflow: hidden;
-    }
-    .logo-circle svg {
-      width: 38px; height: 38px;
-      display: block;
-    }
-    h1 {
-      font-size: 2.3rem;
-      font-weight: 700;
-      margin-bottom: 0.19rem;
-      letter-spacing: 0.01em;
-      font-family: 'SF Pro Display', 'Segoe UI Semibold', 'Roboto', Arial, sans-serif;
-      background: linear-gradient(90deg, #53ffee 15%, #8e6dff 80%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .subtitle {
-      opacity: 0.93;
-      font-weight: 400;
-      margin-bottom: 2.1rem;
-      color: #e1eafc;
-      font-size: 1.08rem;
-      letter-spacing: 0.01em;
-    }
-
-    /* Upload Area */
-    .upload-area {
-      border: 2.3px dashed #7b89c2;
-      background: rgba(40, 44, 60, .28);
-      border-radius: 17px;
-      padding: 2.1rem 1.2rem;
-      min-height: 110px;
-      cursor: pointer;
-      transition: border-color 0.23s, background 0.23s, box-shadow .18s;
-      margin-bottom: 1.55rem;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 1.5px 9px 0 rgba(83,255,238,0.08);
-    }
-    .upload-area.active {
-      border-color: #53ffee;
-      background: rgba(83, 255, 238, 0.13);
-      box-shadow: 0 4px 32px 0 rgba(83,255,238,0.09);
-    }
-    .upload-icon {
-      font-size: 2.7rem;
-      margin-bottom: 0.44rem;
-      color: #53ffee;
-      transition: color .3s;
-      filter: drop-shadow(0 1px 7px #53ffee44);
-    }
-    .upload-area.active .upload-icon { color: #8e6dff; }
-
-    /* File Preview */
-    .file-preview {
-      display: none;
-      margin-top: 1rem;
-      z-index: 4;
-      position: relative;
-    }
-    .file-preview img {
-      max-width: 88%;
-      max-height: 175px;
-      border-radius: 13px;
-      margin-bottom: 0.49rem;
-      box-shadow: 0 1.5px 8px 0 rgba(0,0,0,0.08);
-    }
-    .file-preview p {
-      color: #ffe7b0;
-      font-size: 1.08rem;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-    }
-
-    /* Upload Button */
-    .btn {
-      background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
-      color: #23273a;
-      border: none;
-      padding: 0.93rem 2.2rem;
-      border-radius: 50px;
-      font-size: 1.14rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: box-shadow .22s, background .18s, filter .18s;
-      margin: 0.8rem 0 0.32rem 0;
-      box-shadow: 0 2.5px 18px 0 rgba(83,255,238,0.10);
-      letter-spacing: 0.01em;
-      filter: brightness(0.97);
-      position: relative;
-      z-index: 5;
-    }
-    .btn:active {
-      filter: brightness(0.92);
-    }
-    .btn[disabled] {
-      opacity: 0.65;
-      pointer-events: none;
-      filter: grayscale(0.4);
-    }
-
-    /* File Link */
-    .file-link {
-      display: none;
-      margin-top: 1.7rem;
-      background: rgba(48, 54, 80, 0.23);
-      padding: 1.1rem 0.7rem;
-      border-radius: 13px;
-      word-break: break-all;
-      border: 1.5px solid #53ffee44;
-      box-shadow: 0 1.5px 12px 0 rgba(83,255,238,0.13);
-      position: relative;
-      z-index: 4;
-    }
-    .file-link a {
-      color: #53ffee;
-      text-decoration: none;
-      font-weight: 500;
-      word-break: break-all;
-      font-size: 1.05rem;
-      letter-spacing: 0.01em;
-    }
-    .file-link a:hover { text-decoration: underline; }
-
-    /* Copy Button */
-    .copy-btn {
-      background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
-      color: #23273a;
-      border: none;
-      padding: 0.45rem 1.13rem;
-      border-radius: 7px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-left: 0.7rem;
-      font-weight: 500;
-      transition: filter .14s;
-      filter: brightness(0.97);
-      box-shadow: 0 1.5px 7px 0 rgba(83,255,238,0.06);
-    }
-    .copy-btn:active {
-      filter: brightness(0.9);
-    }
-
-    /* Support Section */
-    .support-section {
-      margin-top: 2.4rem;
-      padding-top: 1.2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.10);
+    .focus-menu {
       position: relative;
       z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 420px;
+      min-width: 320px;
     }
-    .support-btn {
-      display: inline-block;
-      background: rgba(83,255,238,0.10);
-      color: #53ffee;
-      padding: 0.52rem 1.15rem;
-      border-radius: 40px;
-      text-decoration: none;
-      font-weight: 500;
-      margin: 0.28rem 0.7rem 0 0;
-      transition: background .18s, color .22s;
-      border: 1px solid #53ffee33;
-      font-size: 1.01rem;
+    .center-btn {
+      background: rgba(255,255,255,0.24);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 0.75rem 2.6rem 0.75rem 1.5rem;
+      box-shadow: 0 2px 30px rgba(83, 255, 238, 0.15), 0 1.5px 8px 0 rgba(0,0,0,0.08);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(16px) saturate(1.5);
+      -webkit-backdrop-filter: blur(16px) saturate(1.5);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
       letter-spacing: 0.01em;
+      transition: box-shadow 0.22s;
+      position: relative;
+      margin-bottom: 2.2rem;
+      margin-top: 2.2rem;
+      outline: none;
+      border: none;
+      user-select: none;
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(83,255,238,0.13), 0 8px 32px rgba(36,37,38,.13);
     }
-    .support-btn:hover {
-      background: #53ffee;
-      color: #181f2a;
+    .center-btn .moon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8e6dff 40%, #53ffee 100%);
+      box-shadow: 0 2px 12px 0 rgba(83,255,238,0.13);
+      margin-right: 5px;
+    }
+    .center-btn .moon svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      filter: drop-shadow(0 1px 6px #8e6dff66);
+    }
+
+    .circle-btns {
+      position: absolute;
+      left: 0; top: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    /* Position diamond/cross layout: TL, TR, BL, BR */
+    .circle-btn {
+      position: absolute;
+      width: 64px; height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 2px 18px 0 rgba(83,255,238,0.19), 0 1.5px 8px 0 rgba(0,0,0,0.09);
+      border: 1.5px solid rgba(255,255,255,0.20);
+      background: rgba(255,255,255,0.19);
+      backdrop-filter: blur(16px) saturate(1.4);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      transition: box-shadow 0.22s, background 0.19s;
+      pointer-events: auto;
+      cursor: pointer;
+      user-select: none;
+    }
+    .circle-btn svg {
+      width: 32px; height: 32px; display: block;
+      stroke: #fff; stroke-width: 2; fill: none;
+      filter: drop-shadow(0 1.5px 5px #fff2);
+    }
+    .btn-topleft {
+      left: 50%; top: 0;
+      transform: translate(-100%, -50%);
+      background: radial-gradient(circle at 60% 40%, #3ebeff 60%, #2a8fff 100%);
+      box-shadow: 0 0 0 5px #3ebeff33, 0 2px 12px #2a8fff22;
+      border: 1.5px solid #3ebeff33;
+    }
+    .btn-topright {
+      left: 50%; top: 0;
+      transform: translate(0%, -50%);
+      background: radial-gradient(circle at 60% 40%, #c972f8 40%, #8e6dff 100%);
+      box-shadow: 0 0 0 5px #c972f833, 0 2px 12px #8e6dff22;
+      border: 1.5px solid #c972f833;
+    }
+    .btn-bottomleft {
+      left: 50%; bottom: 0;
+      transform: translate(-100%, 50%);
+      background: rgba(255,255,255,0.37);
+      box-shadow: 0 0 0 5px #fff3, 0 2px 12px #fff4;
+      border: 1.5px solid #fff3;
+    }
+    .btn-bottomright {
+      left: 50%; bottom: 0;
+      transform: translate(0%, 50%);
+      background: radial-gradient(circle at 60% 40%, #3ebeff 60%, #2a8fff 100%);
+      box-shadow: 0 0 0 5px #3ebeff33, 0 2px 12px #2a8fff22;
+      border: 1.5px solid #3ebeff33;
     }
 
     /* Responsive */
-    @media (max-width: 600px) {
-      .container { max-width: 99vw; padding: 1.4rem 0.5rem 1.1rem 0.5rem; }
-      .file-preview img { max-width: 100%; }
+    @media (max-width: 500px) {
+      .focus-menu { min-width: 98vw; min-height: 85vw; }
+      .center-btn { font-size: 1rem; padding:0.7rem 1.8rem 0.7rem 1.2rem; }
+      .circle-btn { width: 51px; height: 51px; }
+      .circle-btn svg { width: 24px; height: 24px;}
     }
-    ::selection { background: #53ffee44; }
   </style>
 </head>
 <body>
-  <div class="liquid-bg">
-    <div class="liquid-blob blob1"></div>
-    <div class="liquid-blob blob2"></div>
-    <div class="liquid-blob blob3"></div>
+  <div class="glass-overlay"></div>
+  <div class="focus-menu" style="position:relative;">
+    <button class="center-btn" tabindex="1">
+      <span class="moon">
+        <!-- Moon icon SVG -->
+        <svg viewBox="0 0 24 24"><path d="M16.6 19A8.7 8.7 0 0 1 7 6.9 7.3 7.3 0 1 0 16.6 19Z" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </span>
+      Focus
+    </button>
+    <div class="circle-btns">
+      <!-- Top left: Rotation lock -->
+      <button class="circle-btn btn-topleft" tabindex="2">
+        <!-- Padlock + arrow SVG -->
+        <svg viewBox="0 0 24 24">
+          <path d="M14.8 16.6a5 5 0 1 1 0-9.2M14.8 7.4V5m0 2.4l-2-2M9.2 16.6v-3.2a1.6 1.6 0 1 1 3.2 0v3.2" />
+        </svg>
+      </button>
+      <!-- Top right: Screen mirroring -->
+      <button class="circle-btn btn-topright" tabindex="3">
+        <!-- Overlapping rectangles SVG -->
+        <svg viewBox="0 0 24 24">
+          <rect x="4" y="8" width="14" height="10" rx="2" />
+          <rect x="8" y="6" width="12" height="10" rx="2" />
+        </svg>
+      </button>
+      <!-- Bottom left: Notifications -->
+      <button class="circle-btn btn-bottomleft" tabindex="4">
+        <!-- Bell SVG -->
+        <svg viewBox="0 0 24 24">
+          <path d="M18 16v-5a6 6 0 0 0-12 0v5" />
+          <path d="M13.7 20a2 2 0 0 1-3.4 0" />
+          <path d="M2 16h20" />
+        </svg>
+      </button>
+      <!-- Bottom right: Grid/layout switch -->
+      <button class="circle-btn btn-bottomright" tabindex="5">
+        <!-- Two rectangles SVG -->
+        <svg viewBox="0 0 24 24">
+          <rect x="5" y="7" width="14" height="3" rx="1.2" />
+          <rect x="5" y="14" width="14" height="3" rx="1.2" />
+        </svg>
+      </button>
+    </div>
   </div>
-  <div class="container">
-    <div class="logo-circle">
-      <svg width="38" height="38" fill="none" viewBox="0 0 24 24"><path fill="#23273a" fill-opacity=".83" d="M12 4a7 7 0 00-7 7c0 2.75 2.25 5.38 6.25 8.4a.75.75 0 00.9 0C16.75 16.38 19 13.75 19 11a7 7 0 00-7-7zm0 14.32C7.42 15.02 5 12.64 5 11a7 7 0 1114 0c0 1.64-2.42 4.02-7 7.32z"/><path fill="#53ffee" d="M12 13.75a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/></svg>
-    </div>
-    <h1>LiquidShare</h1>
-    <p class="subtitle">iOS Glass Uploads &mdash; <b>200MB</b> max file</p>
-
-    <div class="upload-area" id="uploadArea">
-      <div class="upload-icon">📤</div>
-      <p>
-        <span style="color: #53ffee;">Tap</span>
-        or
-        <span style="color: #8e6dff;">Drag & Drop</span>
-        to select your file
-      </p>
-      <input type="file" id="fileInput" style="display: none;">
-    </div>
-
-    <button class="btn" id="uploadBtn">Upload File</button>
-
-    <div class="file-preview" id="filePreview">
-      <img id="previewImage" src="" alt="Preview">
-      <p id="fileName"></p>
-    </div>
-
-    <div class="file-link" id="fileLink">
-      <p style="margin-bottom: 0.3rem; color: #53ffee;">Your file link:</p>
-      <div style="display: flex; align-items: center; justify-content: center;">
-        <a id="generatedLink" href="#" target="_blank"></a>
-        <button class="copy-btn" id="copyBtn" title="Copy link">Copy</button>
-      </div>
-    </div>
-
-    <div class="support-section">
-      <p style="color: #c1c9f5; margin-bottom: 0.3rem;">Support Channels</p>
-      <a href="https://t.me/ALL1N_0NE/109" class="support-btn" target="_blank">Join Telegram 1</a>
-      <a href="http://t.me/combohamserdailys" class="support-btn" target="_blank">Join Telegram 2</a>
-    </div>
-  </div>
-  <script>
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('fileInput');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const filePreview = document.getElementById('filePreview');
-    const previewImage = document.getElementById('previewImage');
-    const fileName = document.getElementById('fileName');
-    const fileLink = document.getElementById('fileLink');
-    const generatedLink = document.getElementById('generatedLink');
-    const copyBtn = document.getElementById('copyBtn');
-
-    // Drag & Drop
-    uploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadArea.classList.add('active');
-    });
-    uploadArea.addEventListener('dragleave', () => {
-      uploadArea.classList.remove('active');
-    });
-    uploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadArea.classList.remove('active');
-      if (e.dataTransfer.files.length) {
-        fileInput.files = e.dataTransfer.files;
-        showFilePreview();
-      }
-    });
-    uploadArea.addEventListener('click', () => {
-      fileInput.click();
-    });
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) {
-        showFilePreview();
-      }
-    });
-
-    // Upload Button
-    uploadBtn.addEventListener('click', () => {
-      if (fileInput.files.length) {
-        uploadFile();
-      } else {
-        alert('Please select a file first!');
-      }
-    });
-
-    // Copy Button
-    copyBtn.addEventListener('click', () => {
-      const link = generatedLink.href;
-      navigator.clipboard.writeText(link).then(() => {
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = 'Copy';
-        }, 1800);
-      });
-    });
-
-    // Show File Preview
-    function showFilePreview() {
-      const file = fileInput.files[0];
-      fileName.textContent = file.name;
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          previewImage.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-        filePreview.style.display = 'block';
-      } else {
-        filePreview.style.display = 'none';
-      }
-    }
-
-    // Simulated Upload (replace with real backend logic)
-    function uploadFile() {
-      uploadBtn.textContent = 'Uploading...';
-      uploadBtn.disabled = true;
-      setTimeout(() => {
-        uploadBtn.textContent = 'Upload File';
-        uploadBtn.disabled = false;
-        const randomId = Math.random().toString(36).substring(2, 10);
-        const fileExt = fileInput.files[0].name.split('.').pop();
-        const fileUrl = `https://files.liquidshare.example/${randomId}.${fileExt}`;
-        generatedLink.textContent = fileUrl;
-        generatedLink.href = fileUrl;
-        fileLink.style.display = 'block';
-        fileLink.scrollIntoView({ behavior: 'smooth' });
-      }, 1500);
-    }
-  </script>
 </body>
 </html>
