@@ -11,323 +11,191 @@
       margin: 0;
       background: url('https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80') no-repeat center center fixed;
       background-size: cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-      font-family: 'SF Pro Display', 'Segoe UI', 'Roboto', Arial, sans-serif;
-    }
-    .glass-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: rgba(255,255,255,0.09);
-      backdrop-filter: blur(24px) saturate(1.7);
-      -webkit-backdrop-filter: blur(24px) saturate(1.7);
-      /* glass light streaks */
-      box-shadow: 0 0 0 100vw rgba(255,255,255,0.10) inset;
-    }
-    /* Glass Panel */
-    .container {
-      position: relative;
-      z-index: 2;
-      width: 98vw;
-      max-width: 410px;
-      min-height: 510px;
-      margin: 32px 0;
-      border-radius: 36px;
-      padding: 2.2rem 2rem 2rem 2rem;
-      background: rgba(255,255,255,0.19);
-      box-shadow:
-        0 8px 42px 3px rgba(83,255,238,0.12),
-        0 4px 40px 0 rgba(140,180,255,0.15) inset,
-        0 0.5px 2px 0 rgba(255,255,255,0.20) inset;
-      border: 2.5px solid rgba(255,255,255,0.22);
-      backdrop-filter: blur(24px) saturate(1.55);
-      -webkit-backdrop-filter: blur(24px) saturate(1.55);
-      overflow: visible;
-      text-align: center;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+      color: #23272a;
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* glass shine overlay via pseudo */
+      overflow-y: auto;
+      /* subtle overlay */
     }
-    .container::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 36px;
-      background:
-        linear-gradient(120deg,rgba(255,255,255,0.23) 30%,rgba(83,255,238,0.12) 100%);
-      opacity: 0.86;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .container::after {
-      content: '';
-      position: absolute;
-      left: 0; right: 0; top: 0; height: 37px;
-      border-radius: 36px 36px 80px 80px;
-      background: linear-gradient(180deg,rgba(255,255,255,0.36) 0%,rgba(255,255,255,0.0) 90%);
-      opacity: 0.75;
-      pointer-events: none;
-      z-index: 1;
-      filter: blur(4px);
-    }
-    /* Central logo and title */
-    .logo-circle {
-      background: linear-gradient(135deg, #53ffee 39%, #8e6dff 81%);
-      width: 68px; height: 68px;
-      margin: -2.6rem auto 1.1rem auto;
-      border-radius: 50%;
+    .glass-panel {
+      margin: 6vh 0 4vh 0;
+      width: 100%;
+      max-width: 380px;
+      background: rgba(255,255,255,0.54);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+      backdrop-filter: blur(13px);
+      -webkit-backdrop-filter: blur(13px);
+      border: 1.5px solid rgba(255,255,255,0.23);
+      padding: 2.1rem 1.5rem 1.3rem 1.5rem;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 22px 0 rgba(83,255,238,0.21);
-      font-size: 2.4rem;
-      border: 2px solid rgba(255,255,255,0.41);
       position: relative;
-      z-index: 3;
-      overflow: hidden;
-      /* subtle glass highlight */
-    }
-    .logo-circle::after {
-      content: '';
-      position: absolute;
-      left: 8px; top: 7px; width: 24px; height: 15px;
-      border-radius: 99px;
-      background: rgba(255,255,255,0.25);
-      filter: blur(2.5px);
-      pointer-events: none;
       z-index: 2;
-    }
-    .logo-circle svg {
-      width: 36px; height: 36px;
-      display: block;
-      filter: drop-shadow(0 1px 7px #53ffee44);
     }
     h1 {
-      font-size: 2.3rem;
+      font-size: 2rem;
+      margin-bottom: 0.2em;
       font-weight: 700;
-      margin-bottom: 0.18rem;
       letter-spacing: 0.01em;
-      background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #1b1b1b;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
     .subtitle {
-      opacity: 0.93;
-      font-weight: 400;
-      margin-bottom: 2.2rem;
-      color: #e1eafc;
-      font-size: 1.08rem;
-      letter-spacing: 0.01em;
-      z-index: 2;
-      position: relative;
+      color: #5b5b5b;
+      font-size: 1.05rem;
+      margin-bottom: 1.5em;
+      opacity: 0.85;
     }
-    /* Upload Area - pill glass button */
     .upload-area {
-      border: 2.5px solid #7b89c2;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.21);
-      backdrop-filter: blur(18px) saturate(1.13);
-      -webkit-backdrop-filter: blur(18px) saturate(1.13);
-      box-shadow:
-        0 0.5px 2px 0 rgba(255,255,255,0.26) inset,
-        0 2.5px 28px 0 rgba(83,255,238,0.13),
-        0 0 0 5px rgba(83,255,238,0.08);
-      padding: 1.4rem 0.2rem 1.1rem 0.2rem;
-      min-width: 90%;
+      border: 2px dashed #b7b7b7;
+      border-radius: 13px;
+      background: rgba(255,255,255,0.19);
+      padding: 1.4em 1em;
+      width: 100%;
       min-height: 100px;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.4em;
+      text-align: center;
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: border-color .19s, box-shadow .22s, background .18s;
-      position: relative;
-      z-index: 3;
+      transition: border-color 0.18s, background 0.18s;
+      font-size: 1.1rem;
+      color: #2a2a2a;
     }
     .upload-area.active {
       border-color: #53ffee;
-      background: rgba(83,255,238,0.10);
-      box-shadow:
-        0 0.5px 2px 0 rgba(255,255,255,0.32) inset,
-        0 4px 32px 0 rgba(83,255,238,0.16),
-        0 0 0 8px rgba(83,255,238,0.14);
+      background: rgba(83,255,238,0.08);
     }
     .upload-icon {
-      font-size: 2.6rem;
-      margin-bottom: 0.33rem;
-      color: #53ffee;
-      filter: drop-shadow(0 1px 7px #53ffee55);
-      transition: color .3s;
+      font-size: 2.2em;
+      color: #8e6dff;
+      margin-bottom: 0.2em;
     }
-    .upload-area.active .upload-icon { color: #8e6dff; }
-    /* File Preview */
     .file-preview {
       display: none;
-      margin-top: 1.1rem;
-      z-index: 4;
-      position: relative;
+      margin-top: 0.8em;
+      text-align: center;
     }
     .file-preview img {
-      max-width: 88%;
-      max-height: 170px;
-      border-radius: 12px;
-      margin-bottom: 0.6rem;
-      box-shadow: 0 1.5px 8px 0 rgba(0,0,0,0.08);
+      max-width: 94%;
+      max-height: 140px;
+      border-radius: 7px;
+      margin-bottom: 0.5em;
+      box-shadow: 0 1px 6px 0 rgba(0,0,0,0.08);
     }
     .file-preview p {
-      color: #ffe7b0;
-      font-size: 1.08rem;
-      font-weight: 500;
-      letter-spacing: 0.01em;
+      color: #434343;
+      font-size: 1em;
+      word-break: break-all;
     }
-    /* Upload Button - glass pill */
     .btn {
-      background: linear-gradient(90deg, #53ffee 20%, #8e6dff 95%);
+      background: linear-gradient(90deg, #53ffee 20%, #8e6dff 90%);
       color: #23273a;
       border: none;
-      padding: 0.89rem 2.4rem;
-      border-radius: 999px;
-      font-size: 1.13rem;
-      font-weight: 700;
+      padding: 0.78em 1.9em;
+      border-radius: 33px;
+      font-size: 1.1em;
+      font-weight: 600;
       cursor: pointer;
-      transition: box-shadow .16s, background .18s, filter .12s;
-      margin: 0.8rem 0 0.32rem 0;
-      box-shadow: 0 2.5px 18px 0 rgba(83,255,238,0.11);
-      letter-spacing: 0.01em;
-      filter: brightness(0.97);
-      position: relative;
-      z-index: 5;
-      /* glass shine overlay */
+      margin: 0.4em 0;
+      transition: filter 0.15s;
+      box-shadow: 0 1px 8px rgba(83,255,238,0.06);
     }
-    .btn:active {
-      filter: brightness(0.93);
-    }
-    .btn[disabled] {
-      opacity: 0.65;
-      pointer-events: none;
-      filter: grayscale(0.5);
-    }
-    /* File Link */
+    .btn:active { filter: brightness(0.92);}
+    .btn[disabled] { opacity: 0.6; pointer-events: none;}
     .file-link {
       display: none;
-      margin-top: 1.7rem;
-      background: rgba(48, 54, 80, 0.20);
-      padding: 1.1rem 0.7rem;
-      border-radius: 13px;
+      margin-top: 1.3em;
+      background: rgba(255,255,255,0.16);
+      padding: 0.92em 0.5em;
+      border-radius: 9px;
+      font-size: 1em;
+      color: #23273a;
+      border: 1.2px solid #53ffee44;
+      box-shadow: 0 1px 8px 0 rgba(83,255,238,0.07);
       word-break: break-all;
-      border: 1.5px solid #53ffee44;
-      box-shadow: 0 1.5px 12px 0 rgba(83,255,238,0.13);
-      position: relative;
-      z-index: 4;
+      text-align: left;
+      width: 100%;
     }
     .file-link a {
-      color: #53ffee;
+      color: #4f59e6;
       text-decoration: none;
-      font-weight: 500;
       word-break: break-all;
-      font-size: 1.06rem;
-      letter-spacing: 0.01em;
     }
-    .file-link a:hover { text-decoration: underline; }
-    /* Copy Button */
+    .file-link a:hover {
+      text-decoration: underline;
+    }
     .copy-btn {
-      background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
-      color: #23273a;
+      background: #f3f3f3;
+      color: #353535;
       border: none;
-      padding: 0.42rem 1.1rem;
-      border-radius: 99px;
-      font-size: 0.97rem;
+      padding: 0.3em 1em;
+      border-radius: 7px;
+      font-size: 0.95em;
       cursor: pointer;
-      margin-left: 0.7rem;
+      margin-left: 0.6em;
       font-weight: 500;
-      transition: filter .14s;
-      filter: brightness(0.97);
-      box-shadow: 0 1.5px 7px 0 rgba(83,255,238,0.06);
+      border: 1px solid #e0eaff;
+      transition: background 0.14s;
     }
-    .copy-btn:active {
-      filter: brightness(0.9);
-    }
-    /* Support Section */
+    .copy-btn:active {background: #e0eaff;}
     .support-section {
-      margin-top: 2.2rem;
-      padding-top: 1.2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.09);
-      position: relative;
-      z-index: 2;
+      margin-top: 2em;
+      padding-top: 1.2em;
+      border-top: 1px solid #d1d1d1;
+      width: 100%;
+      text-align: center;
+      font-size: 0.97em;
+      color: #5d5d5d;
+      opacity: 0.92;
     }
     .support-btn {
       display: inline-block;
-      background: rgba(83,255,238,0.11);
-      color: #53ffee;
-      padding: 0.53rem 1.15rem;
-      border-radius: 40px;
+      background: #f3f3fe;
+      color: #4c64e6;
+      padding: 0.47em 1.13em;
+      border-radius: 33px;
       text-decoration: none;
       font-weight: 500;
-      margin: 0.28rem 0.7rem 0 0;
-      transition: background .18s, color .17s;
-      border: 1px solid #53ffee33;
-      font-size: 1.01rem;
-      letter-spacing: 0.01em;
+      margin: 0.26em 0.7em 0 0;
+      border: 1px solid #e0eaff;
+      transition: background 0.12s, color 0.12s;
+      font-size: 1em;
     }
     .support-btn:hover {
-      background: #53ffee;
-      color: #181f2a;
+      background: #e0eaff;
+      color: #1b1b1b;
     }
-    /* Responsive */
-    @media (max-width: 600px) {
-      .container { max-width: 99vw; padding: 1.1rem 0.2rem 1.1rem 0.2rem; min-height: unset; }
-      .file-preview img { max-width: 100%; }
+    @media (max-width: 500px) {
+      .glass-panel { max-width: 98vw; padding: 0.9em 0.24em; }
     }
-    ::selection { background: #53ffee44; }
   </style>
 </head>
 <body>
-  <div class="glass-bg"></div>
-  <div class="container">
-    <div class="logo-circle">
-      <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><path fill="#23273a" fill-opacity=".83" d="M12 4a7 7 0 00-7 7c0 2.75 2.25 5.38 6.25 8.4a.75.75 0 00.9 0C16.75 16.38 19 13.75 19 11a7 7 0 00-7-7zm0 14.32C7.42 15.02 5 12.64 5 11a7 7 0 1114 0c0 1.64-2.42 4.02-7 7.32z"/><path fill="#53ffee" d="M12 13.75a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/></svg>
-    </div>
+  <div class="glass-panel">
     <h1>LiquidShare</h1>
-    <p class="subtitle">Upload up to <b>200MB</b> – Pure Glass, Pure Shine</p>
-
+    <div class="subtitle">Upload up to <b>200MB</b></div>
     <div class="upload-area" id="uploadArea">
       <div class="upload-icon">📤</div>
-      <p>
-        <span style="color: #53ffee;">Tap</span>
-        or
-        <span style="color: #8e6dff;">Drag & Drop</span>
-        your file
-      </p>
+      <div>Click or drag a file here</div>
       <input type="file" id="fileInput" style="display: none;">
     </div>
-
     <button class="btn" id="uploadBtn">Upload File</button>
-
     <div class="file-preview" id="filePreview">
       <img id="previewImage" src="" alt="Preview">
       <p id="fileName"></p>
     </div>
-
     <div class="file-link" id="fileLink">
-      <p style="margin-bottom: 0.3rem; color: #53ffee;">Your file link:</p>
-      <div style="display: flex; align-items: center; justify-content: center;">
-        <a id="generatedLink" href="#" target="_blank"></a>
-        <button class="copy-btn" id="copyBtn" title="Copy link">Copy</button>
-      </div>
+      <span>Your file link: </span>
+      <a id="generatedLink" href="#" target="_blank"></a>
+      <button class="copy-btn" id="copyBtn">Copy</button>
     </div>
-
     <div class="support-section">
-      <p style="color: #c1c9f5; margin-bottom: 0.3rem;">Support Channels</p>
-      <a href="https://t.me/ALL1N_0NE/109" class="support-btn" target="_blank">Join Telegram 1</a>
-      <a href="http://t.me/combohamserdailys" class="support-btn" target="_blank">Join Telegram 2</a>
+      <span>Support Channels</span><br>
+      <a href="https://t.me/ALL1N_0NE/109" class="support-btn" target="_blank">Telegram 1</a>
+      <a href="http://t.me/combohamserdailys" class="support-btn" target="_blank">Telegram 2</a>
     </div>
   </div>
   <script>
@@ -340,11 +208,8 @@
     const fileLink = document.getElementById('fileLink');
     const generatedLink = document.getElementById('generatedLink');
     const copyBtn = document.getElementById('copyBtn');
-
-    // Drag & Drop
     uploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadArea.classList.add('active');
+      e.preventDefault(); uploadArea.classList.add('active');
     });
     uploadArea.addEventListener('dragleave', () => {
       uploadArea.classList.remove('active');
@@ -357,52 +222,28 @@
         showFilePreview();
       }
     });
-    uploadArea.addEventListener('click', () => {
-      fileInput.click();
-    });
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) {
-        showFilePreview();
-      }
-    });
-
-    // Upload Button
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {if (fileInput.files.length) showFilePreview();});
     uploadBtn.addEventListener('click', () => {
-      if (fileInput.files.length) {
-        uploadFile();
-      } else {
-        alert('Please select a file first!');
-      }
+      if (fileInput.files.length) {uploadFile();} else {alert('Please select a file first!');}
     });
-
-    // Copy Button
     copyBtn.addEventListener('click', () => {
       const link = generatedLink.href;
       navigator.clipboard.writeText(link).then(() => {
         copyBtn.textContent = 'Copied!';
-        setTimeout(() => {
-          copyBtn.textContent = 'Copy';
-        }, 1800);
+        setTimeout(() => {copyBtn.textContent = 'Copy';}, 1400);
       });
     });
-
-    // Show File Preview
     function showFilePreview() {
       const file = fileInput.files[0];
       fileName.textContent = file.name;
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          previewImage.src = e.target.result;
-        };
+        reader.onload = (e) => {previewImage.src = e.target.result;};
         reader.readAsDataURL(file);
         filePreview.style.display = 'block';
-      } else {
-        filePreview.style.display = 'none';
-      }
+      } else {filePreview.style.display = 'none';}
     }
-
-    // Simulated Upload (replace with real backend logic)
     function uploadFile() {
       uploadBtn.textContent = 'Uploading...';
       uploadBtn.disabled = true;
@@ -416,7 +257,7 @@
         generatedLink.href = fileUrl;
         fileLink.style.display = 'block';
         fileLink.scrollIntoView({ behavior: 'smooth' });
-      }, 1500);
+      }, 1200);
     }
   </script>
 </body>
