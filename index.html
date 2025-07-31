@@ -45,8 +45,8 @@
         .container {
             z-index: 2;
             width: 100%;
-            max-width: 430px;
-            padding: 2.4rem 2rem 2.2rem 2rem;
+            max-width: 340px; /* <-- narrower, premium look */
+            padding: 2.2rem 1.2rem 1.8rem 1.2rem;
             background: rgba(28, 32, 44, 0.78);
             border-radius: 28px;
             border: 2px solid rgba(255,255,255,0.16);
@@ -62,7 +62,7 @@
         /* Header */
         .logo-circle {
             background: linear-gradient(135deg, #53ffee 20%, #8e6dff 80%);
-            width: 60px; height: 60px;
+            width: 54px; height: 54px;
             margin: 0 auto 1rem auto;
             border-radius: 50%;
             display: flex;
@@ -72,37 +72,37 @@
             font-size: 2rem;
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.18rem;
             letter-spacing: 0.01em;
             font-family: 'Segoe UI Semibold', 'Roboto', Arial, sans-serif;
         }
         .subtitle {
             opacity: 0.92;
             font-weight: 400;
-            margin-bottom: 2rem;
+            margin-bottom: 1.3rem;
             color: #c1c9f5;
         }
 
         /* Upload Area */
         .upload-area {
-            border: 2.5px dashed #7b89c2;
+            border: 2px dashed #7b89c2;
             background: rgba(40, 44, 60, .37);
-            border-radius: 16px;
-            padding: 2.2rem 1.2rem;
+            border-radius: 15px;
+            padding: 1.5rem 0.7rem;
             cursor: pointer;
             transition: border-color 0.23s, background 0.23s;
-            margin-bottom: 1.6rem;
+            margin-bottom: 1.2rem;
             position: relative;
-            min-height: 110px;
+            min-height: 90px;
         }
         .upload-area.active {
             border-color: #53ffee;
             background: rgba(83, 255, 238, 0.08);
         }
         .upload-icon {
-            font-size: 2.6rem;
+            font-size: 2.2rem;
             margin-bottom: 0.5rem;
             color: #53ffee;
             transition: color .3s;
@@ -112,18 +112,18 @@
         /* File Preview */
         .file-preview {
             display: none;
-            margin-top: 1rem;
+            margin-top: 0.7rem;
         }
         .file-preview img {
-            max-width: 88%;
-            max-height: 170px;
-            border-radius: 10px;
-            margin-bottom: 0.6rem;
+            max-width: 90%;
+            max-height: 120px;
+            border-radius: 9px;
+            margin-bottom: 0.4rem;
             box-shadow: 0 1.5px 8px 0 rgba(0,0,0,0.10);
         }
         .file-preview p {
             color: #ffe7b0;
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
 
         /* Upload Button */
@@ -131,13 +131,13 @@
             background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
             color: #23273a;
             border: none;
-            padding: 0.85rem 1.85rem;
+            padding: 0.7rem 1.4rem;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: box-shadow .18s, background .18s, filter .18s;
-            margin: 0.7rem 0 0.2rem 0;
+            margin: 0.55rem 0 0.2rem 0;
             box-shadow: 0 1.5px 9px 0 rgba(83,255,238,0.09);
             letter-spacing: 0.01em;
             filter: brightness(0.97);
@@ -153,12 +153,12 @@
         /* File Link */
         .file-link {
             display: none;
-            margin-top: 1.6rem;
+            margin-top: 1.1rem;
             background: rgba(48, 54, 80, 0.34);
-            padding: 1.1rem 0.7rem;
-            border-radius: 11px;
+            padding: 0.8rem 0.5rem;
+            border-radius: 10px;
             word-break: break-all;
-            border: 1.5px solid #53ffee44;
+            border: 1.2px solid #53ffee44;
             box-shadow: 0 1.5px 12px 0 rgba(83,255,238,0.14);
         }
         .file-link a {
@@ -174,11 +174,11 @@
             background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
             color: #23273a;
             border: none;
-            padding: 0.42rem 1rem;
+            padding: 0.32rem 0.8rem;
             border-radius: 7px;
-            font-size: 0.95rem;
+            font-size: 0.93rem;
             cursor: pointer;
-            margin-left: 0.7rem;
+            margin-left: 0.5rem;
             font-weight: 500;
             transition: filter .18s;
             filter: brightness(0.97);
@@ -189,22 +189,22 @@
 
         /* Support Section */
         .support-section {
-            margin-top: 2.2rem;
-            padding-top: 1.2rem;
+            margin-top: 1.5rem;
+            padding-top: 0.8rem;
             border-top: 1px solid rgba(255, 255, 255, 0.14);
         }
         .support-btn {
             display: inline-block;
             background: rgba(83,255,238,0.13);
             color: #53ffee;
-            padding: 0.5rem 1.1rem;
+            padding: 0.44rem 0.85rem;
             border-radius: 40px;
             text-decoration: none;
             font-weight: 500;
-            margin: 0.25rem 0.8rem 0 0;
+            margin: 0.19rem 0.5rem 0 0;
             transition: background .2s, color .2s;
             border: 1px solid #53ffee44;
-            font-size: 1.01rem;
+            font-size: 0.99rem;
         }
         .support-btn:hover {
             background: #53ffee;
