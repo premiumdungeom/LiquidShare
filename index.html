@@ -111,7 +111,7 @@
         .upload-text {
             transition: opacity 0.2s;
         }
-        .upload-area.uploading .upload-text {
+        .upload-area.active .upload-text {
             opacity: 0.7;
         }
         .upload-progress {
@@ -122,7 +122,7 @@
             width: 0;
             background: rgba(83, 255, 238, 0.1);
             border-radius: 14px;
-            transition: width 0.1s linear;
+            transition: width 0.3s;
             z-index: -1;
         }
         .progress-text {
@@ -149,6 +149,30 @@
         .file-preview p {
             color: #ffe7b0;
             font-size: 1.05rem;
+        }
+
+        /* Upload Button */
+        .btn {
+            background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
+            color: #23273a;
+            border: none;
+            padding: 0.85rem 1.85rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow .18s, background .18s, filter .18s;
+            margin: 0.7rem 0 0.2rem 0;
+            box-shadow: 0 1.5px 9px 0 rgba(83,255,238,0.09);
+            letter-spacing: 0.01em;
+            filter: brightness(0.97);
+        }
+        .btn:active {
+            filter: brightness(0.93);
+        }
+        .btn[disabled] {
+            opacity: 0.6;
+            pointer-events: none;
         }
 
         /* File Link */
@@ -210,6 +234,28 @@
         .support-btn:hover {
             background: #53ffee;
             color: #181f2a;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            gap: 0.5rem;
+        }
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: rgba(83, 255, 238, 0.1);
+            color: #53ffee;
+            border: 1px solid rgba(83, 255, 238, 0.2);
+        }
+        .tab.active {
+            background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
+            color: #23273a;
         }
 
         /* Options */
@@ -295,10 +341,44 @@
             transform: rotate(45deg);
         }
 
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            margin-top: 1rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Album Files */
+        .album-files {
+            margin: 1.5rem 0;
+            text-align: left;
+            display: none;
+        }
+        .album-files p {
+            color: #53ffee;
+            margin-bottom: 0.5rem;
+        }
+        .album-file-item {
+            font-size: 0.9rem;
+            color: #c1c9f5;
+            margin-bottom: 0.3rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+        .album-file-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #8e6dff;
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .container { max-width: 98vw; padding: 1.2rem 0.6rem 1.1rem 0.6rem; }
             .file-preview img { max-width: 100%; }
+            .tabs { flex-wrap: wrap; }
             .option-row { flex-direction: column; align-items: flex-start; }
             .option-control { width: 100%; margin-top: 0.3rem; }
             select, input[type="text"] { max-width: 100%; }
@@ -316,50 +396,133 @@
             <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="#23273a" fill-opacity=".82" d="M12 4a7 7 0 00-7 7c0 2.75 2.25 5.38 6.25 8.4a.75.75 0 00.9 0C16.75 16.38 19 13.75 19 11a7 7 0 00-7-7zm0 14.32C7.42 15.02 5 12.64 5 11a7 7 0 1114 0c0 1.64-2.42 4.02-7 7.32z"/><path fill="#53ffee" d="M12 13.75a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/></svg>
         </div>
         <h1>LiquidShare</h1>
-        <p class="subtitle">Instant File Sharing – Just Drop and Go</p>
+        <p class="subtitle">Full-featured Catbox.moe client – Files, Albums & More</p>
 
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-progress" id="uploadProgress"></div>
-            <span class="progress-text" id="progressText"></span>
-            <div class="upload-icon">📤</div>
-            <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to upload files</p>
-            <input type="file" id="fileInput" style="display: none;">
+        <div class="tabs">
+            <div class="tab active" data-tab="file">File Upload</div>
+            <div class="tab" data-tab="album">Album</div>
+            <div class="tab" data-tab="url">URL Upload</div>
         </div>
 
-        <div class="options">
-            <div class="option-row">
-                <div class="option-label">Upload Type:</div>
-                <div class="option-control">
-                    <select id="uploadType">
-                        <option value="catbox">Catbox (Permanent)</option>
-                        <option value="litterbox">Litterbox (Temporary)</option>
-                    </select>
+        <!-- File Upload Tab -->
+        <div id="fileTab" class="tab-content active">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-progress" id="fileUploadProgress"></div>
+                <span class="progress-text" id="fileProgressText"></span>
+                <div class="upload-icon">📤</div>
+                <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select your file</p>
+                <input type="file" id="fileInput" style="display: none;">
+            </div>
+
+            <div class="options">
+                <div class="option-row">
+                    <div class="option-label">Upload Type:</div>
+                    <div class="option-control">
+                        <select id="uploadType">
+                            <option value="catbox">Catbox (Permanent)</option>
+                            <option value="litterbox">Litterbox (Temporary)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="option-row">
+                    <div class="option-label">Shorten URL:</div>
+                    <div class="option-control">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="shortenUrl" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="option-row">
+                    <div class="option-label">Custom Filename:</div>
+                    <div class="option-control">
+                        <input type="text" id="customFilename" placeholder="Leave blank for original">
+                    </div>
                 </div>
             </div>
-            <div class="option-row">
-                <div class="option-label">Shorten URL:</div>
-                <div class="option-control">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="shortenUrl" checked>
-                        <span class="checkmark"></span>
-                    </label>
-                </div>
-            </div>
-            <div class="option-row">
-                <div class="option-label">Custom Filename:</div>
-                <div class="option-control">
-                    <input type="text" id="customFilename" placeholder="Leave blank for original">
-                </div>
+
+            <button class="btn" id="uploadBtn">Upload File</button>
+
+            <div class="file-preview" id="filePreview">
+                <img id="previewImage" src="" alt="Preview">
+                <p id="fileName"></p>
             </div>
         </div>
 
-        <div class="file-preview" id="filePreview">
-            <img id="previewImage" src="" alt="Preview">
-            <p id="fileName"></p>
+        <!-- Album Tab -->
+        <div id="albumTab" class="tab-content">
+            <div class="upload-area" id="albumUploadArea">
+                <div class="upload-progress" id="albumUploadProgress"></div>
+                <span class="progress-text" id="albumProgressText"></span>
+                <div class="upload-icon">📚</div>
+                <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select multiple files</p>
+                <input type="file" id="albumFileInput" style="display: none;" multiple>
+            </div>
+
+            <div class="options">
+                <div class="option-row">
+                    <div class="option-label">Album Title:</div>
+                    <div class="option-control">
+                        <input type="text" id="albumTitle" placeholder="My Awesome Album">
+                    </div>
+                </div>
+                <div class="option-row">
+                    <div class="option-label">Description:</div>
+                    <div class="option-control">
+                        <input type="text" id="albumDescription" placeholder="Optional description">
+                    </div>
+                </div>
+                <div class="option-row">
+                    <div class="option-label">Shorten URL:</div>
+                    <div class="option-control">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="albumShortenUrl" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" id="createAlbumBtn">Create Album</button>
+
+            <div class="album-files" id="albumFilesList">
+                <p>Selected Files:</p>
+                <div id="albumFiles"></div>
+            </div>
         </div>
 
+        <!-- URL Upload Tab -->
+        <div id="urlTab" class="tab-content">
+            <div class="options">
+                <div class="option-row">
+                    <div class="option-label">File URL:</div>
+                    <div class="option-control">
+                        <input type="text" id="fileUrl" placeholder="https://example.com/file.jpg">
+                    </div>
+                </div>
+                <div class="option-row">
+                    <div class="option-label">Custom Filename:</div>
+                    <div class="option-control">
+                        <input type="text" id="urlCustomFilename" placeholder="Leave blank for original">
+                    </div>
+                </div>
+                <div class="option-row">
+                    <div class="option-label">Shorten URL:</div>
+                    <div class="option-control">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="urlShortenUrl" checked>
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" id="uploadUrlBtn">Upload from URL</button>
+        </div>
+
+        <!-- Results Section (Shared across all tabs) -->
         <div class="file-link" id="fileLink">
-            <p style="margin-bottom: 0.3rem; color: #53ffee;">Your file link:</p>
+            <p style="margin-bottom: 0.3rem; color: #53ffee;">Your link:</p>
             <div style="display: flex; align-items: center; justify-content: center;">
                 <a id="generatedLink" href="#" target="_blank"></a>
                 <button class="copy-btn" id="copyBtn" title="Copy link">Copy</button>
@@ -377,14 +540,25 @@
         // DOM Elements
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
         const filePreview = document.getElementById('filePreview');
         const previewImage = document.getElementById('previewImage');
         const fileName = document.getElementById('fileName');
         const fileLink = document.getElementById('fileLink');
         const generatedLink = document.getElementById('generatedLink');
         const copyBtn = document.getElementById('copyBtn');
-        const uploadProgress = document.getElementById('uploadProgress');
-        const progressText = document.getElementById('progressText');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const albumUploadArea = document.getElementById('albumUploadArea');
+        const albumFileInput = document.getElementById('albumFileInput');
+        const createAlbumBtn = document.getElementById('createAlbumBtn');
+        const albumFilesList = document.getElementById('albumFilesList');
+        const albumFiles = document.getElementById('albumFiles');
+        const uploadUrlBtn = document.getElementById('uploadUrlBtn');
+        const fileUploadProgress = document.getElementById('fileUploadProgress');
+        const albumUploadProgress = document.getElementById('albumUploadProgress');
+        const fileProgressText = document.getElementById('fileProgressText');
+        const albumProgressText = document.getElementById('albumProgressText');
 
         // Configuration
         const config = {
@@ -395,10 +569,33 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            setupTabs();
             setupFileUpload();
+            setupAlbumUpload();
+            setupUrlUpload();
         });
 
-        // File Upload Setup
+        // Tab Switching
+        function setupTabs() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const tabContent = document.getElementById(`${tab.dataset.tab}Tab`);
+                    tabContent.classList.add('active');
+                    
+                    // Scroll to the active tab content
+                    tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Hide results when switching tabs
+                    fileLink.style.display = 'none';
+                });
+            });
+        }
+
+        // File Upload Tab
         function setupFileUpload() {
             // Drag & Drop
             uploadArea.addEventListener('dragover', (e) => {
@@ -415,30 +612,88 @@
                 uploadArea.classList.remove('active');
                 if (e.dataTransfer.files.length) {
                     fileInput.files = e.dataTransfer.files;
-                    handleFileSelection();
+                    showFilePreview();
                 }
             });
             
             uploadArea.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', () => {
                 if (fileInput.files.length) {
-                    handleFileSelection();
+                    showFilePreview();
                 }
+            });
+
+            // Upload Button
+            uploadBtn.addEventListener('click', async () => {
+                if (!fileInput.files.length) {
+                    showAlert('Please select a file first!');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                
+                // Validate file
+                if (!validateFile(file)) return;
+                
+                await uploadFile(file);
             });
         }
 
-        // Handle File Selection (auto-upload)
-        function handleFileSelection() {
-            const file = fileInput.files[0];
+        // Album Tab
+        function setupAlbumUpload() {
+            // Drag & Drop for Album
+            albumUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                albumUploadArea.classList.add('active');
+            });
             
-            // Validate file
-            if (!validateFile(file)) return;
+            albumUploadArea.addEventListener('dragleave', () => {
+                albumUploadArea.classList.remove('active');
+            });
             
-            // Show preview
-            showFilePreview(file);
+            albumUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                albumUploadArea.classList.remove('active');
+                if (e.dataTransfer.files.length) {
+                    albumFileInput.files = e.dataTransfer.files;
+                    showAlbumFilesPreview();
+                }
+            });
             
-            // Start upload immediately
-            uploadFile(file);
+            albumUploadArea.addEventListener('click', () => albumFileInput.click());
+            albumFileInput.addEventListener('change', () => {
+                if (albumFileInput.files.length) {
+                    showAlbumFilesPreview();
+                }
+            });
+
+            // Create Album Button
+            createAlbumBtn.addEventListener('click', async () => {
+                if (!albumFileInput.files || albumFileInput.files.length === 0) {
+                    showAlert('Please select at least one file for the album!');
+                    return;
+                }
+                
+                // Validate all files
+                for (let i = 0; i < albumFileInput.files.length; i++) {
+                    if (!validateFile(albumFileInput.files[i])) return;
+                }
+                
+                await createAlbum();
+            });
+        }
+
+        // URL Upload Tab
+        function setupUrlUpload() {
+            uploadUrlBtn.addEventListener('click', async () => {
+                const fileUrl = document.getElementById('fileUrl').value.trim();
+                if (!fileUrl) {
+                    showAlert('Please enter a valid URL!');
+                    return;
+                }
+                
+                await uploadFromUrl(fileUrl);
+            });
         }
 
         // Copy Button
@@ -451,17 +706,17 @@
         });
 
         // Update progress bar
-        function updateProgress(progress) {
+        function updateProgress(progressElement, progressTextElement, progress) {
             const percent = Math.round(progress * 100);
-            uploadProgress.style.width = `${percent}%`;
-            progressText.textContent = `${percent}%`;
+            progressElement.style.width = `${percent}%`;
+            progressTextElement.textContent = `${percent}%`;
             
             if (percent >= 100) {
                 setTimeout(() => {
-                    uploadProgress.style.opacity = '0';
-                    progressText.textContent = '';
+                    progressElement.style.opacity = '0';
+                    progressTextElement.textContent = '';
                     setTimeout(() => {
-                        uploadProgress.style.width = '0%';
+                        progressElement.style.width = '0%';
                     }, 300);
                 }, 500);
             }
@@ -488,7 +743,8 @@
         }
 
         // Show File Preview
-        function showFilePreview(file) {
+        function showFilePreview() {
+            const file = fileInput.files[0];
             fileName.textContent = `${file.name} (${formatFileSize(file.size)})`;
             
             if (file.type.startsWith('image/')) {
@@ -501,6 +757,22 @@
                 filePreview.style.display = 'block';
                 previewImage.style.display = 'none';
             }
+        }
+
+        // Show Album Files Preview
+        function showAlbumFilesPreview() {
+            albumFiles.innerHTML = '';
+            const files = albumFileInput.files;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileElement = document.createElement('div');
+                fileElement.className = 'album-file-item';
+                fileElement.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                albumFiles.appendChild(fileElement);
+            }
+            
+            albumFilesList.style.display = 'block';
         }
 
         // Format file size
@@ -518,90 +790,321 @@
         }
 
         // Upload File with progress tracking
-        function uploadFile(file) {
-            // Show uploading state
-            uploadArea.classList.add('uploading');
-            uploadProgress.style.opacity = '1';
+        async function uploadFile(file) {
+            uploadBtn.textContent = 'Uploading...';
+            uploadBtn.disabled = true;
+            fileUploadProgress.style.opacity = '1';
             
-            const uploadType = document.getElementById('uploadType').value;
-            const shortenUrl = document.getElementById('shortenUrl').checked;
-            const customFilename = document.getElementById('customFilename').value.trim();
+            try {
+                const uploadType = document.getElementById('uploadType').value;
+                const shortenUrl = document.getElementById('shortenUrl').checked;
+                const customFilename = document.getElementById('customFilename').value.trim();
+                
+                // 1. Upload to Catbox or Litterbox with progress tracking
+                let catboxUrl;
+                if (uploadType === 'catbox') {
+                    catboxUrl = await uploadFileToCatboxWithProgress(file, customFilename, 
+                        (progress) => {
+                            updateProgress(fileUploadProgress, fileProgressText, progress);
+                        });
+                } else {
+                    catboxUrl = await uploadFileToLitterboxWithProgress(file, customFilename,
+                        (progress) => {
+                            updateProgress(fileUploadProgress, fileProgressText, progress);
+                        });
+                }
+                
+                let finalUrl = catboxUrl;
+                let serviceUsed = 'Original URL';
+                
+                // 2. Shorten URL if enabled
+                if (shortenUrl) {
+                    try {
+                        finalUrl = await shortenLink(catboxUrl);
+                        serviceUsed = finalUrl.includes('cleanuri.com') ? 'CleanURI' :
+                                     finalUrl.includes('tinyurl.com') ? 'TinyURL' :
+                                     finalUrl.includes('shrtco.de') ? 'Shrtcode' : 
+                                     'Unknown Service';
+                    } catch (e) {
+                        console.error('URL shortening failed:', e);
+                    }
+                }
+                
+                // 3. Display result
+                showResult(finalUrl, serviceUsed);
+                updateProgress(fileUploadProgress, fileProgressText, 1);
+            } catch (e) {
+                showAlert('Upload failed: ' + e.message);
+                console.error('Upload error:', e);
+                updateProgress(fileUploadProgress, fileProgressText, 1);
+            } finally {
+                uploadBtn.textContent = 'Upload File';
+                uploadBtn.disabled = false;
+            }
+        }
+
+        // Create Album with progress tracking
+        async function createAlbum() {
+            createAlbumBtn.textContent = 'Creating Album...';
+            createAlbumBtn.disabled = true;
+            albumUploadProgress.style.opacity = '1';
             
+            try {
+                const title = document.getElementById('albumTitle').value.trim() || 'Untitled Album';
+                const description = document.getElementById('albumDescription').value.trim() || '';
+                const shortenUrl = document.getElementById('albumShortenUrl').checked;
+                const files = albumFileInput.files;
+                
+                // Track overall progress
+                let totalProgress = 0;
+                const progressPerFile = 0.8 / files.length; // 80% for file uploads
+                const progressForAlbumCreation = 0.2; // 20% for album creation
+                
+                // 1. Upload all files first with progress tracking
+                const fileUrls = [];
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const url = await uploadFileToCatboxWithProgress(file, '',
+                        (progress) => {
+                            // Update progress for this file
+                            const fileProgress = (i * progressPerFile) + (progress * progressPerFile);
+                            totalProgress = fileProgress;
+                            updateProgress(albumUploadProgress, albumProgressText, totalProgress);
+                        });
+                    fileUrls.push(url.split('/').pop()); // Get just the filename
+                }
+                
+                // 2. Create album
+                const albumUrl = await createAlbumOnCatbox(title, description, fileUrls);
+                
+                // Update progress for album creation
+                totalProgress = 0.8 + progressForAlbumCreation;
+                updateProgress(albumUploadProgress, albumProgressText, totalProgress);
+                
+                let finalUrl = albumUrl;
+                let serviceUsed = 'Original URL';
+                
+                // 3. Shorten URL if enabled
+                if (shortenUrl) {
+                    try {
+                        finalUrl = await shortenLink(albumUrl);
+                        serviceUsed = finalUrl.includes('cleanuri.com') ? 'CleanURI' :
+                                     finalUrl.includes('tinyurl.com') ? 'TinyURL' :
+                                     finalUrl.includes('shrtco.de') ? 'Shrtcode' : 
+                                     'Unknown Service';
+                    } catch (e) {
+                        console.error('URL shortening failed:', e);
+                    }
+                }
+                
+                // 4. Display result
+                showResult(finalUrl, serviceUsed);
+                updateProgress(albumUploadProgress, albumProgressText, 1);
+            } catch (e) {
+                showAlert('Album creation failed: ' + e.message);
+                console.error('Album error:', e);
+                updateProgress(albumUploadProgress, albumProgressText, 1);
+            } finally {
+                createAlbumBtn.textContent = 'Create Album';
+                createAlbumBtn.disabled = false;
+            }
+        }
+
+        // Upload from URL
+        async function uploadFromUrl(url) {
+            uploadUrlBtn.textContent = 'Uploading...';
+            uploadUrlBtn.disabled = true;
+            
+            try {
+                const shortenUrl = document.getElementById('urlShortenUrl').checked;
+                const customFilename = document.getElementById('urlCustomFilename').value.trim();
+                
+                // 1. Upload to Catbox
+                const catboxUrl = await uploadUrlToCatbox(url, customFilename);
+                let finalUrl = catboxUrl;
+                let serviceUsed = 'Original URL';
+                
+                // 2. Shorten URL if enabled
+                if (shortenUrl) {
+                    try {
+                        finalUrl = await shortenLink(catboxUrl);
+                        serviceUsed = finalUrl.includes('cleanuri.com') ? 'CleanURI' :
+                                     finalUrl.includes('tinyurl.com') ? 'TinyURL' :
+                                     finalUrl.includes('shrtco.de') ? 'Shrtcode' : 
+                                     'Unknown Service';
+                    } catch (e) {
+                        console.error('URL shortening failed:', e);
+                    }
+                }
+                
+                // 3. Display result
+                showResult(finalUrl, serviceUsed);
+            } catch (e) {
+                showAlert('URL upload failed: ' + e.message);
+                console.error('URL upload error:', e);
+            } finally {
+                uploadUrlBtn.textContent = 'Upload from URL';
+                uploadUrlBtn.disabled = false;
+            }
+        }
+
+        // Catbox API Functions with Progress Tracking
+        async function uploadFileToCatboxWithProgress(file, customFilename = '', progressCallback) {
             return new Promise((resolve, reject) => {
                 const formData = new FormData();
                 formData.append('reqtype', 'fileupload');
-                
-                if (uploadType === 'catbox') {
-                    formData.append('userhash', config.userHash);
-                } else {
-                    formData.append('time', '1h'); // 1 hour expiration for Litterbox
-                }
-                
+                formData.append('userhash', config.userHash);
                 formData.append('fileToUpload', file);
                 if (customFilename) {
                     formData.append('fileName', customFilename);
                 }
 
                 const xhr = new XMLHttpRequest();
-                const endpoint = uploadType === 'catbox' 
-                    ? 'https://corsproxy.io/?https://catbox.moe/user/api.php'
-                    : 'https://corsproxy.io/?https://litterbox.catbox.moe/resources/internals/api.php';
                 
                 xhr.upload.addEventListener('progress', (e) => {
                     if (e.lengthComputable) {
                         const progress = e.loaded / e.total;
-                        updateProgress(progress);
+                        progressCallback(progress);
                     }
                 });
                 
                 xhr.addEventListener('load', () => {
-                    uploadArea.classList.remove('uploading');
-                    
                     if (xhr.status >= 200 && xhr.status < 300) {
-                        const url = xhr.responseText.trim();
-                        handleUploadSuccess(url, shortenUrl);
-                        resolve(url);
+                        resolve(xhr.responseText.trim());
                     } else {
-                        showAlert('Upload failed! Please try again.');
                         reject(new Error(`HTTP error! status: ${xhr.status}`));
                     }
                 });
                 
                 xhr.addEventListener('error', () => {
-                    uploadArea.classList.remove('uploading');
-                    showAlert('Upload failed! Please check your connection and try again.');
-                    reject(new Error('Network error during upload'));
+                    reject(new Error('Failed to upload file. Please try again later.'));
                 });
                 
-                xhr.open('POST', endpoint, true);
+                xhr.open('POST', 'https://corsproxy.io/?https://catbox.moe/user/api.php', true);
                 xhr.setRequestHeader('Accept', '*/*');
-                xhr.setRequestHeader('Origin', uploadType === 'catbox' 
-                    ? 'https://catbox.moe' 
-                    : 'https://litterbox.catbox.moe');
+                xhr.setRequestHeader('Origin', 'https://catbox.moe');
                 xhr.send(formData);
             });
         }
 
-        // Handle successful upload
-        async function handleUploadSuccess(url, shortenUrl) {
-            let finalUrl = url;
-            let serviceUsed = 'Original URL';
-            
-            // Shorten URL if enabled
-            if (shortenUrl) {
-                try {
-                    finalUrl = await shortenLink(url);
-                    serviceUsed = finalUrl.includes('cleanuri.com') ? 'CleanURI' :
-                                 finalUrl.includes('tinyurl.com') ? 'TinyURL' :
-                                 finalUrl.includes('shrtco.de') ? 'Shrtcode' : 
-                                 'Unknown Service';
-                } catch (e) {
-                    console.error('URL shortening failed:', e);
+        async function uploadFileToLitterboxWithProgress(file, customFilename = '', progressCallback) {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('reqtype', 'fileupload');
+                formData.append('time', '1h'); // 1 hour expiration
+                formData.append('fileToUpload', file);
+                if (customFilename) {
+                    formData.append('fileName', customFilename);
                 }
+
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const progress = e.loaded / e.total;
+                        progressCallback(progress);
+                    }
+                });
+                
+                xhr.addEventListener('load', () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(xhr.responseText.trim());
+                    } else {
+                        reject(new Error(`HTTP error! status: ${xhr.status}`));
+                    }
+                });
+                
+                xhr.addEventListener('error', () => {
+                    reject(new Error('Failed to upload to Litterbox. Please try again later.'));
+                });
+                
+                xhr.open('POST', 'https://corsproxy.io/?https://litterbox.catbox.moe/resources/internals/api.php', true);
+                xhr.setRequestHeader('Accept', '*/*');
+                xhr.setRequestHeader('Origin', 'https://litterbox.catbox.moe');
+                xhr.send(formData);
+            });
+        }
+
+        async function uploadUrlToCatbox(url, customFilename = '') {
+            const formData = new FormData();
+            formData.append('reqtype', 'urlupload');
+            formData.append('userhash', config.userHash);
+            formData.append('url', url);
+            if (customFilename) {
+                formData.append('fileName', customFilename);
             }
+
+            try {
+                const response = await fetch('https://corsproxy.io/?https://catbox.moe/user/api.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': '*/*',
+                        'Origin': 'https://catbox.moe'
+                    }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const resultUrl = await response.text();
+                return resultUrl.trim();
+            } catch (e) {
+                console.error('URL upload error:', e);
+                throw new Error('Failed to upload from URL. Please try again later.');
+            }
+        }
+
+        async function createAlbumOnCatbox(title, description, files) {
+            const formData = new FormData();
+            formData.append('reqtype', 'createalbum');
+            formData.append('userhash', config.userHash);
+            formData.append('title', title);
+            formData.append('desc', description);
+            formData.append('files', files.join(' '));
             
-            // Display result
-            showResult(finalUrl, serviceUsed);
+            try {
+                const response = await fetch('https://corsproxy.io/?https://catbox.moe/user/api.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': '*/*',
+                        'Origin': 'https://catbox.moe'
+                    }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const albumUrl = await response.text();
+                return albumUrl.trim();
+            } catch (e) {
+                console.error('Album creation error:', e);
+                throw new Error('Failed to create album. Please try again later.');
+            }
+        }
+
+        async function deleteFile(filename) {
+            const formData = new FormData();
+            formData.append('reqtype', 'deletefiles');
+            formData.append('userhash', config.userHash);
+            formData.append('files', filename);
+            
+            try {
+                const response = await fetch('https://corsproxy.io/?https://catbox.moe/user/api.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': '*/*',
+                        'Origin': 'https://catbox.moe'
+                    }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                return await response.text();
+            } catch (e) {
+                console.error('Delete error:', e);
+                throw new Error('Failed to delete file. Please try again later.');
+            }
         }
 
         // URL shortening
