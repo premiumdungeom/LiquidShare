@@ -270,14 +270,6 @@
         const generatedLink = document.getElementById('generatedLink');
         const copyBtn = document.getElementById('copyBtn');
 
-        // Configuration
-        const config = {
-            userHash: '1640741c61e0e54c28c5aea97', // Your userhash
-            anonymousUpload: false, // Set to true for anonymous uploads
-            shortenUrl: true, // Set to false to keep original Catbox URL
-            maxFileSizeMB: 200 // Catbox's limit for free users
-        };
-
         // Drag & Drop (same as before)
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -365,7 +357,7 @@
         const catboxUrl = await uploadFileToCatbox(file);
         
         // 2. Shorten URL (with automatic fallback)
-        const finalUrl = await shortenLink(catboxUrl);
+        const finalUrl = config.shortenUrl ? await shortenLink(catboxUrl) : catboxUrl;
         
         // 3. Display result
         showResult(finalUrl);
@@ -377,6 +369,15 @@
         uploadBtn.disabled = false;
     }
 }
+
+// Make sure this is included in your config
+const config = {
+    userHash: '1640741c61e0e54c28c5aea97',
+    anonymousUpload: false,
+    shortenUrl: true,  // Can toggle shortening on/off
+    maxFileSizeMB: 200
+};
+
         // Standard file upload
         async function uploadFileToCatbox(file) {
     const formData = new FormData();
@@ -427,6 +428,34 @@ async function shortenLink(longUrl) {
         console.error('Shortening failed, using original URL:', e);
         return longUrl; // Fallback to original URL if shortening fails
     }
+}
+
+// Add this function to your script section
+function showResult(url) {
+    // Update the link display
+    generatedLink.textContent = url;
+    generatedLink.href = url;
+    
+    // Show the file link container
+    fileLink.style.display = 'block';
+    
+    // Smooth scroll to show the result
+    fileLink.scrollIntoView({ behavior: 'smooth' });
+    
+    // Remove any existing info message
+    const existingInfo = fileLink.querySelector('.upload-info');
+    if (existingInfo) {
+        fileLink.removeChild(existingInfo);
+    }
+    
+    // Add new info message
+    const info = document.createElement('p');
+    info.className = 'upload-info';
+    info.style.marginTop = '8px';
+    info.style.fontSize = '0.85rem';
+    info.style.color = '#c1c9f5';
+    info.textContent = 'File will be stored on Catbox.moe';
+    fileLink.appendChild(info);
 }
 
         // Additional API functions you might want to implement later
