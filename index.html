@@ -392,46 +392,30 @@
 
         // Standard file upload
         async function uploadFileToCatbox(file) {
-            const formData = new FormData();
-            formData.append('reqtype', 'fileupload');
-            if (!config.anonymousUpload) {
-                formData.append('userhash', config.userHash);
-            }
-            formData.append('fileToUpload', file);
+    const formData = new FormData();
+    formData.append('reqtype', 'fileupload');
+    formData.append('userhash', config.userHash);
+    formData.append('fileToUpload', file);
 
-            const response = await fetch('https://catbox.moe/user/api.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+        const response = await fetch('https://corsproxy.io/?https://catbox.moe/user/api.php', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': '*/*',
+                'Origin': 'https://catbox.moe'
             }
-            
-            const url = await response.text();
-            return url.trim();
-        }
-
-        // Chunked upload for larger files (not officially supported but more reliable)
-        async function uploadFileToCatboxChunked(file) {
-            const chunkSize = 5 * 1024 * 1024; // 5MB chunks
-            const chunks = Math.ceil(file.size / chunkSize);
-            
-            // This is a simplified approach - Catbox doesn't officially support chunked uploads
-            // But breaking into smaller chunks can help with reliability
-            for (let i = 0; i < chunks; i++) {
-                const start = i * chunkSize;
-                const end = Math.min(file.size, start + chunkSize);
-                const chunk = file.slice(start, end);
-                
-                try {
-                    return await uploadFileToCatbox(chunk);
-                } catch (e) {
-                    if (i === chunks - 1) throw e; // If last chunk failed, throw error
-                    console.log(`Chunk ${i+1}/${chunks} failed, retrying...`);
-                }
-            }
-        }
+        });
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const url = await response.text();
+        return url.trim();
+    } catch (e) {
+        console.error('Upload error:', e);
+        throw new Error('Failed to upload file. Please try again later.');
+    }
+}
 
         // URL shortening
         async function shortenLink(longUrl) {
