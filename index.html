@@ -108,11 +108,28 @@
             transition: color .3s;
         }
         .upload-area.active .upload-icon { color: #8e6dff; }
+        .upload-text {
+            transition: opacity 0.2s;
+        }
+        .upload-area.active .upload-text {
+            opacity: 0.7;
+        }
+        .upload-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            background: rgba(83, 255, 238, 0.1);
+            border-radius: 14px;
+            transition: width 0.3s;
+            z-index: -1;
+        }
 
         /* File Preview */
         .file-preview {
             display: none;
-            margin-top: 1rem;
+            margin: 1.5rem 0;
         }
         .file-preview img {
             max-width: 88%;
@@ -153,7 +170,7 @@
         /* File Link */
         .file-link {
             display: none;
-            margin-top: 1.6rem;
+            margin: 2rem 0;
             background: rgba(48, 54, 80, 0.34);
             padding: 1.1rem 0.7rem;
             border-radius: 11px;
@@ -236,7 +253,7 @@
         /* Options */
         .options {
             text-align: left;
-            margin-bottom: 1.5rem;
+            margin: 1.5rem 0;
             background: rgba(40, 44, 60, 0.37);
             padding: 1rem;
             border-radius: 12px;
@@ -316,6 +333,39 @@
             transform: rotate(45deg);
         }
 
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            margin-top: 1rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Album Files */
+        .album-files {
+            margin: 1.5rem 0;
+            text-align: left;
+            display: none;
+        }
+        .album-files p {
+            color: #53ffee;
+            margin-bottom: 0.5rem;
+        }
+        .album-file-item {
+            font-size: 0.9rem;
+            color: #c1c9f5;
+            margin-bottom: 0.3rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+        .album-file-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #8e6dff;
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .container { max-width: 98vw; padding: 1.2rem 0.6rem 1.1rem 0.6rem; }
@@ -349,8 +399,9 @@
         <!-- File Upload Tab -->
         <div id="fileTab" class="tab-content active">
             <div class="upload-area" id="uploadArea">
+                <div class="upload-progress" id="fileUploadProgress"></div>
                 <div class="upload-icon">📤</div>
-                <p><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select your file</p>
+                <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select your file</p>
                 <input type="file" id="fileInput" style="display: none;">
             </div>
 
@@ -392,8 +443,9 @@
         <!-- Album Tab -->
         <div id="albumTab" class="tab-content">
             <div class="upload-area" id="albumUploadArea">
+                <div class="upload-progress" id="albumUploadProgress"></div>
                 <div class="upload-icon">📚</div>
-                <p><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select multiple files</p>
+                <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select multiple files</p>
                 <input type="file" id="albumFileInput" style="display: none;" multiple>
             </div>
 
@@ -423,15 +475,15 @@
 
             <button class="btn" id="createAlbumBtn">Create Album</button>
 
-            <div id="albumFilesList" style="margin-top: 1.5rem; text-align: left; display: none;">
-                <p style="color: #53ffee; margin-bottom: 0.5rem;">Selected Files:</p>
+            <div class="album-files" id="albumFilesList">
+                <p>Selected Files:</p>
                 <div id="albumFiles"></div>
             </div>
         </div>
 
         <!-- URL Upload Tab -->
         <div id="urlTab" class="tab-content">
-            <div class="options" style="margin-bottom: 1.5rem;">
+            <div class="options">
                 <div class="option-row">
                     <div class="option-label">File URL:</div>
                     <div class="option-control">
@@ -493,6 +545,8 @@
         const albumFilesList = document.getElementById('albumFilesList');
         const albumFiles = document.getElementById('albumFiles');
         const uploadUrlBtn = document.getElementById('uploadUrlBtn');
+        const fileUploadProgress = document.getElementById('fileUploadProgress');
+        const albumUploadProgress = document.getElementById('albumUploadProgress');
 
         // Configuration
         const config = {
@@ -517,7 +571,11 @@
                     tabContents.forEach(c => c.classList.remove('active'));
                     
                     tab.classList.add('active');
-                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                    const tabContent = document.getElementById(`${tab.dataset.tab}Tab`);
+                    tabContent.classList.add('active');
+                    
+                    // Scroll to the active tab content
+                    tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     
                     // Hide results when switching tabs
                     fileLink.style.display = 'none';
@@ -543,12 +601,22 @@
                 if (e.dataTransfer.files.length) {
                     fileInput.files = e.dataTransfer.files;
                     showFilePreview();
+                    // Show loading immediately on drop
+                    simulateProgress(fileUploadProgress, () => {
+                        // This will be replaced by actual upload progress later
+                    });
                 }
             });
             
             uploadArea.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) showFilePreview();
+                if (fileInput.files.length) {
+                    showFilePreview();
+                    // Show loading immediately on file selection
+                    simulateProgress(fileUploadProgress, () => {
+                        // This will be replaced by actual upload progress later
+                    });
+                }
             });
 
             // Upload Button
@@ -585,12 +653,22 @@
                 if (e.dataTransfer.files.length) {
                     albumFileInput.files = e.dataTransfer.files;
                     showAlbumFilesPreview();
+                    // Show loading immediately on drop
+                    simulateProgress(albumUploadProgress, () => {
+                        // This will be replaced by actual upload progress later
+                    });
                 }
             });
             
             albumUploadArea.addEventListener('click', () => albumFileInput.click());
             albumFileInput.addEventListener('change', () => {
-                if (albumFileInput.files.length) showAlbumFilesPreview();
+                if (albumFileInput.files.length) {
+                    showAlbumFilesPreview();
+                    // Show loading immediately on file selection
+                    simulateProgress(albumUploadProgress, () => {
+                        // This will be replaced by actual upload progress later
+                    });
+                }
             });
 
             // Create Album Button
@@ -631,6 +709,34 @@
             });
         });
 
+        // Simulate progress bar (will be replaced by actual upload progress)
+        function simulateProgress(progressElement, callback) {
+            let width = 0;
+            progressElement.style.width = '0%';
+            progressElement.style.opacity = '1';
+            
+            const interval = setInterval(() => {
+                if (width >= 90) {
+                    clearInterval(interval);
+                    // Don't complete until actual upload finishes
+                    return;
+                }
+                width += 10;
+                progressElement.style.width = `${width}%`;
+            }, 200);
+        }
+
+        // Complete progress bar
+        function completeProgress(progressElement) {
+            progressElement.style.width = '100%';
+            setTimeout(() => {
+                progressElement.style.opacity = '0';
+                setTimeout(() => {
+                    progressElement.style.width = '0%';
+                }, 300);
+            }, 500);
+        }
+
         // File Validation
         function validateFile(file) {
             // Check file size
@@ -662,7 +768,8 @@
                 reader.readAsDataURL(file);
                 filePreview.style.display = 'block';
             } else {
-                filePreview.style.display = 'none';
+                filePreview.style.display = 'block';
+                previewImage.style.display = 'none';
             }
         }
 
@@ -674,10 +781,8 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const fileElement = document.createElement('div');
-                fileElement.style.marginBottom = '0.5rem';
-                fileElement.style.fontSize = '0.9rem';
-                fileElement.style.color = '#c1c9f5';
-                fileElement.textContent = `${i+1}. ${file.name} (${formatFileSize(file.size)})`;
+                fileElement.className = 'album-file-item';
+                fileElement.textContent = `${file.name} (${formatFileSize(file.size)})`;
                 albumFiles.appendChild(fileElement);
             }
             
@@ -734,9 +839,11 @@
                 
                 // 3. Display result
                 showResult(finalUrl, serviceUsed);
+                completeProgress(fileUploadProgress);
             } catch (e) {
                 showAlert('Upload failed: ' + e.message);
                 console.error('Upload error:', e);
+                completeProgress(fileUploadProgress);
             } finally {
                 uploadBtn.textContent = 'Upload File';
                 uploadBtn.disabled = false;
@@ -782,9 +889,11 @@
                 
                 // 4. Display result
                 showResult(finalUrl, serviceUsed);
+                completeProgress(albumUploadProgress);
             } catch (e) {
                 showAlert('Album creation failed: ' + e.message);
                 console.error('Album error:', e);
+                completeProgress(albumUploadProgress);
             } finally {
                 createAlbumBtn.textContent = 'Create Album';
                 createAlbumBtn.disabled = false;
