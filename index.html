@@ -355,12 +355,21 @@
     try {
         // 1. Upload to Catbox
         const catboxUrl = await uploadFileToCatbox(file);
+        let finalUrl = catboxUrl;
+        let isShortened = false;
         
-        // 2. Shorten URL (with automatic fallback)
-        const finalUrl = config.shortenUrl ? await shortenLink(catboxUrl) : catboxUrl;
+        // 2. Shorten URL if enabled
+        if (config.shortenUrl) {
+            try {
+                finalUrl = await shortenLink(catboxUrl);
+                isShortened = (finalUrl !== catboxUrl);
+            } catch (e) {
+                console.error('URL shortening failed, using original URL');
+            }
+        }
         
         // 3. Display result
-        showResult(finalUrl);
+        showResult(finalUrl, isShortened);
     } catch (e) {
         showAlert('Upload failed: ' + e.message);
         console.error('Upload error:', e);
@@ -409,6 +418,7 @@ const config = {
         // Replace your current shortenLink function with this:
 async function shortenLink(longUrl) {
     try {
+        console.log('Attempting to shorten URL:', longUrl);
         const response = await fetch('https://cleanuri.com/api/v1/shorten', {
             method: 'POST',
             headers: {
@@ -417,45 +427,42 @@ async function shortenLink(longUrl) {
             body: `url=${encodeURIComponent(longUrl)}`
         });
         
+        console.log('Shortener response status:', response.status);
         const data = await response.json();
+        console.log('Shortener response data:', data);
         
-        if (data.error) {
-            throw new Error(data.error);
+        if (!data.result_url) {
+            throw new Error(data.error || 'No shortened URL returned');
         }
         
         return data.result_url;
     } catch (e) {
-        console.error('Shortening failed, using original URL:', e);
-        return longUrl; // Fallback to original URL if shortening fails
+        console.error('Shortening failed:', e);
+        return longUrl; // Fallback to original URL
     }
 }
 
 // Add this function to your script section
-function showResult(url) {
-    // Update the link display
+function showResult(url, isShortened = true) {
     generatedLink.textContent = url;
     generatedLink.href = url;
-    
-    // Show the file link container
     fileLink.style.display = 'block';
-    
-    // Smooth scroll to show the result
     fileLink.scrollIntoView({ behavior: 'smooth' });
     
-    // Remove any existing info message
-    const existingInfo = fileLink.querySelector('.upload-info');
-    if (existingInfo) {
-        fileLink.removeChild(existingInfo);
-    }
+    // Clear previous messages
+    const oldMessages = fileLink.querySelectorAll('.upload-message');
+    oldMessages.forEach(msg => msg.remove());
     
-    // Add new info message
-    const info = document.createElement('p');
-    info.className = 'upload-info';
-    info.style.marginTop = '8px';
-    info.style.fontSize = '0.85rem';
-    info.style.color = '#c1c9f5';
-    info.textContent = 'File will be stored on Catbox.moe';
-    fileLink.appendChild(info);
+    // Add appropriate message
+    const message = document.createElement('p');
+    message.className = 'upload-message';
+    message.style.marginTop = '8px';
+    message.style.fontSize = '0.85rem';
+    message.style.color = isShortened ? '#53ffee' : '#ffb86b';
+    message.textContent = isShortened 
+        ? 'Shortened URL created successfully' 
+        : 'Using original URL (shortening failed)';
+    fileLink.appendChild(message);
 }
 
         // Additional API functions you might want to implement later
