@@ -357,39 +357,26 @@
 
         // Enhanced Catbox API Functions
         async function uploadFile(file) {
-            uploadBtn.textContent = 'Uploading...';
-            uploadBtn.disabled = true;
-            
-            try {
-                // Upload to Catbox
-                let catboxUrl;
-                if (file.size < 1024 * 1024 * 20) { // 20MB threshold
-                    catboxUrl = await uploadFileToCatbox(file);
-                } else {
-                    catboxUrl = await uploadFileToCatboxChunked(file);
-                }
-                
-                // Shorten URL if enabled
-                let finalUrl = catboxUrl;
-                if (config.shortenUrl) {
-                    try {
-                        finalUrl = await shortenLink(catboxUrl);
-                    } catch (e) {
-                        console.warn('URL shortening failed, using original URL', e);
-                    }
-                }
-                
-                // Display result
-                showResult(finalUrl);
-            } catch (e) {
-                showAlert('Upload failed: ' + e.message);
-                console.error('Upload error:', e);
-            } finally {
-                uploadBtn.textContent = 'Upload File';
-                uploadBtn.disabled = false;
-            }
-        }
-
+    uploadBtn.textContent = 'Uploading...';
+    uploadBtn.disabled = true;
+    
+    try {
+        // 1. Upload to Catbox
+        const catboxUrl = await uploadFileToCatbox(file);
+        
+        // 2. Shorten URL (with automatic fallback)
+        const finalUrl = await shortenLink(catboxUrl);
+        
+        // 3. Display result
+        showResult(finalUrl);
+    } catch (e) {
+        showAlert('Upload failed: ' + e.message);
+        console.error('Upload error:', e);
+    } finally {
+        uploadBtn.textContent = 'Upload File';
+        uploadBtn.disabled = false;
+    }
+}
         // Standard file upload
         async function uploadFileToCatbox(file) {
     const formData = new FormData();
@@ -418,31 +405,29 @@
 }
 
         // URL shortening
-        async function shortenLink(longUrl) {
-            const resp = await fetch(`https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(longUrl)}`);
-            const data = await resp.json();
-            if (data.ok) {
-                return data.result.full_short_link;
-            } else {
-                throw new Error(data.error || 'Shortener error');
-            }
+        // Replace your current shortenLink function with this:
+async function shortenLink(longUrl) {
+    try {
+        const response = await fetch('https://cleanuri.com/api/v1/shorten', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `url=${encodeURIComponent(longUrl)}`
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error);
         }
-
-        // Display result
-        function showResult(url) {
-            generatedLink.textContent = url;
-            generatedLink.href = url;
-            fileLink.style.display = 'block';
-            fileLink.scrollIntoView({ behavior: 'smooth' });
-            
-            // Additional info for the user
-            const info = document.createElement('p');
-            info.style.marginTop = '8px';
-            info.style.fontSize = '0.85rem';
-            info.style.color = '#c1c9f5';
-            info.textContent = 'File will be stored on Catbox.moe';
-            fileLink.appendChild(info);
-        }
+        
+        return data.result_url;
+    } catch (e) {
+        console.error('Shortening failed, using original URL:', e);
+        return longUrl; // Fallback to original URL if shortening fails
+    }
+}
 
         // Additional API functions you might want to implement later
         async function deleteFile(filename) {
