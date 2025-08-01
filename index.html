@@ -5,387 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiquidShare | Catbox.moe Uploader</title>
     <link rel="icon" type="image/svg+xml" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/cloud-upload.svg">
-    <style>
-        /* Background Animation */
-        body {
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-            background: linear-gradient(135deg, #181f2a 0%, #3e4a61 100%);
-            overflow-x: hidden;
-        }
-
-        .bg-animated {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: moveBlobs 18s infinite alternate;
-        }
-        .blob1 { background: #53ffee; width: 400px; height: 400px; top: 5%; left: -10%; animation-delay: 0s;}
-        .blob2 { background: #8e6dff; width: 350px; height: 350px; top: 60%; left: 70%; animation-delay: 3s;}
-        .blob3 { background: #ffb86b; width: 250px; height: 250px; top: 45%; left: 10%; animation-delay: 6s;}
-        @keyframes moveBlobs {
-            0% { transform: scale(1) translateY(0px);}
-            100% { transform: scale(1.15) translateY(-30px);}
-        }
-
-        /* Glass Panel */
-        .container {
-            z-index: 2;
-            width: 100%;
-            max-width: 500px;
-            padding: 2.4rem 2rem 2.2rem 2rem;
-            background: rgba(28, 32, 44, 0.78);
-            border-radius: 28px;
-            border: 2px solid rgba(255,255,255,0.16);
-            box-shadow: 0 10px 36px 0 rgba(36,37,38,.22), 0 1.5px 6px 0 rgba(0,0,0,0.10);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            color: #f8fafd;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Header */
-        .logo-circle {
-            background: linear-gradient(135deg, #53ffee 20%, #8e6dff 80%);
-            width: 60px; height: 60px;
-            margin: 0 auto 1rem auto;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 16px 0 rgba(83,255,238,0.14);
-            font-size: 2rem;
-        }
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-            letter-spacing: 0.01em;
-            font-family: 'Segoe UI Semibold', 'Roboto', Arial, sans-serif;
-        }
-        .subtitle {
-            opacity: 0.92;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-            color: #c1c9f5;
-        }
-
-        /* Upload Area */
-        .upload-area {
-            border: 2.5px dashed #7b89c2;
-            background: rgba(40, 44, 60, .37);
-            border-radius: 16px;
-            padding: 2.2rem 1.2rem;
-            cursor: pointer;
-            transition: border-color 0.23s, background 0.23s;
-            margin-bottom: 1.6rem;
-            position: relative;
-            min-height: 110px;
-        }
-        .upload-area.active {
-            border-color: #53ffee;
-            background: rgba(83, 255, 238, 0.08);
-        }
-        .upload-icon {
-            font-size: 2.6rem;
-            margin-bottom: 0.5rem;
-            color: #53ffee;
-            transition: color .3s;
-        }
-        .upload-area.active .upload-icon { color: #8e6dff; }
-        .upload-text {
-            transition: opacity 0.2s;
-        }
-        .upload-area.active .upload-text {
-            opacity: 0.7;
-        }
-        .upload-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 0;
-            background: rgba(83, 255, 238, 0.1);
-            border-radius: 14px;
-            transition: width 0.3s;
-            z-index: -1;
-        }
-        .progress-text {
-            position: absolute;
-            bottom: 10px;
-            right: 15px;
-            font-size: 0.8rem;
-            color: #53ffee;
-            font-weight: 500;
-        }
-
-        /* File Preview */
-        .file-preview {
-            display: none;
-            margin: 1.5rem 0;
-        }
-        .file-preview img {
-            max-width: 88%;
-            max-height: 170px;
-            border-radius: 10px;
-            margin-bottom: 0.6rem;
-            box-shadow: 0 1.5px 8px 0 rgba(0,0,0,0.10);
-        }
-        .file-preview p {
-            color: #ffe7b0;
-            font-size: 1.05rem;
-        }
-
-        /* Upload Button */
-        .btn {
-            background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
-            color: #23273a;
-            border: none;
-            padding: 0.85rem 1.85rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: box-shadow .18s, background .18s, filter .18s;
-            margin: 0.7rem 0 0.2rem 0;
-            box-shadow: 0 1.5px 9px 0 rgba(83,255,238,0.09);
-            letter-spacing: 0.01em;
-            filter: brightness(0.97);
-        }
-        .btn:active {
-            filter: brightness(0.93);
-        }
-        .btn[disabled] {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        /* File Link */
-        .file-link {
-            display: none;
-            margin: 2rem 0;
-            background: rgba(48, 54, 80, 0.34);
-            padding: 1.1rem 0.7rem;
-            border-radius: 11px;
-            word-break: break-all;
-            border: 1.5px solid #53ffee44;
-            box-shadow: 0 1.5px 12px 0 rgba(83,255,238,0.14);
-        }
-        .file-link a {
-            color: #53ffee;
-            text-decoration: none;
-            font-weight: 500;
-            word-break: break-all;
-        }
-        .file-link a:hover { text-decoration: underline; }
-
-        /* Copy Button */
-        .copy-btn {
-            background: linear-gradient(90deg, #53ffee 10%, #8e6dff 90%);
-            color: #23273a;
-            border: none;
-            padding: 0.42rem 1rem;
-            border-radius: 7px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            margin-left: 0.7rem;
-            font-weight: 500;
-            transition: filter .18s;
-            filter: brightness(0.97);
-        }
-        .copy-btn:active {
-            filter: brightness(0.9);
-        }
-
-        /* Support Section */
-        .support-section {
-            margin-top: 2.2rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.14);
-        }
-        .support-btn {
-            display: inline-block;
-            background: rgba(83,255,238,0.13);
-            color: #53ffee;
-            padding: 0.5rem 1.1rem;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 500;
-            margin: 0.25rem 0.8rem 0 0;
-            transition: background .2s, color .2s;
-            border: 1px solid #53ffee44;
-            font-size: 1.01rem;
-        }
-        .support-btn:hover {
-            background: #53ffee;
-            color: #181f2a;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            gap: 0.5rem;
-        }
-        .tab {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            background: rgba(83, 255, 238, 0.1);
-            color: #53ffee;
-            border: 1px solid rgba(83, 255, 238, 0.2);
-        }
-        .tab.active {
-            background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
-            color: #23273a;
-        }
-
-        /* Options */
-        .options {
-            text-align: left;
-            margin: 1.5rem 0;
-            background: rgba(40, 44, 60, 0.37);
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .option-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .option-row:last-child {
-            margin-bottom: 0;
-        }
-        .option-label {
-            flex: 1;
-            color: #c1c9f5;
-            font-size: 0.95rem;
-        }
-        .option-control {
-            flex: 1;
-            text-align: right;
-        }
-        select, input[type="text"] {
-            background: rgba(28, 32, 44, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f8fafd;
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
-            width: 100%;
-            max-width: 200px;
-        }
-        .checkbox-container {
-            display: inline-block;
-            position: relative;
-            padding-left: 30px;
-            cursor: pointer;
-            user-select: none;
-        }
-        .checkbox-container input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 20px;
-            width: 20px;
-            background-color: rgba(28, 32, 44, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        .checkbox-container:hover input ~ .checkmark {
-            background-color: rgba(40, 44, 60, 0.8);
-        }
-        .checkbox-container input:checked ~ .checkmark {
-            background: linear-gradient(90deg, #53ffee 30%, #8e6dff 100%);
-        }
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-        }
-        .checkbox-container input:checked ~ .checkmark:after {
-            display: block;
-        }
-        .checkbox-container .checkmark:after {
-            left: 7px;
-            top: 3px;
-            width: 5px;
-            height: 10px;
-            border: solid #23273a;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-            margin-top: 1rem;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Album Files */
-        .album-files {
-            margin: 1.5rem 0;
-            text-align: left;
-            display: none;
-        }
-        .album-files p {
-            color: #53ffee;
-            margin-bottom: 0.5rem;
-        }
-        .album-file-item {
-            font-size: 0.9rem;
-            color: #c1c9f5;
-            margin-bottom: 0.3rem;
-            padding-left: 1rem;
-            position: relative;
-        }
-        .album-file-item:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #8e6dff;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .container { max-width: 98vw; padding: 1.2rem 0.6rem 1.1rem 0.6rem; }
-            .file-preview img { max-width: 100%; }
-            .tabs { flex-wrap: wrap; }
-            .option-row { flex-direction: column; align-items: flex-start; }
-            .option-control { width: 100%; margin-top: 0.3rem; }
-            select, input[type="text"] { max-width: 100%; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Background Image (can be changed in settings) -->
+    <img id="bgImage" class="bg-image" src="" alt="Background" style="display: none;">
+
     <div class="bg-animated">
         <div class="blob blob1"></div>
         <div class="blob blob2"></div>
@@ -393,15 +18,30 @@
     </div>
     <div class="container">
         <div class="logo-circle">
-            <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="#23273a" fill-opacity=".82" d="M12 4a7 7 0 00-7 7c0 2.75 2.25 5.38 6.25 8.4a.75.75 0 00.9 0C16.75 16.38 19 13.75 19 11a7 7 0 00-7-7zm0 14.32C7.42 15.02 5 12.64 5 11a7 7 0 1114 0c0 1.64-2.42 4.02-7 7.32z"/><path fill="#53ffee" d="M12 13.75a2.75 2.75 0 100-5.5 2.75 2.75 0 000 5.5z"/></svg>
+            <img id="logoImage" class="logo-image" src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/cloud-upload.svg" alt="Logo">
         </div>
-        <h1>LiquidShare</h1>
+        <h1>LIQUIDSHARE</h1>
         <p class="subtitle">Full-featured Catbox.moe client – Files, Albums & More</p>
-
+        
         <div class="tabs">
-            <div class="tab active" data-tab="file">File Upload</div>
-            <div class="tab" data-tab="album">Album</div>
-            <div class="tab" data-tab="url">URL Upload</div>
+            <div class="tab active" data-tab="file">
+                File Upload 
+                <span class="view-counter" id="fileViews">
+                    
+                </span>
+            </div>
+            <div class="tab" data-tab="album">
+                Album 
+                <span class="view-counter" id="albumViews">
+                    
+                </span>
+            </div>
+            <div class="tab" data-tab="url">
+                URL Upload 
+                <span class="view-counter" id="urlViews">
+                    
+                </span>
+            </div>
         </div>
 
         <!-- File Upload Tab -->
@@ -410,7 +50,7 @@
                 <div class="upload-progress" id="fileUploadProgress"></div>
                 <span class="progress-text" id="fileProgressText"></span>
                 <div class="upload-icon">📤</div>
-                <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select your file</p>
+                <p class="upload-text"><span style="color: #60a5fa;">Click</span> or <span style="color: #a78bfa;">Drag & Drop</span> to select your file</p>
                 <input type="file" id="fileInput" style="display: none;">
             </div>
 
@@ -442,6 +82,9 @@
             </div>
 
             <button class="btn" id="uploadBtn">Upload File</button>
+            <div class="usage-count" id="fileUsageCount">
+             <i>📊</i> Used <span id="fileUsageCountNumber">0</span> times 
+            </div>
 
             <div class="file-preview" id="filePreview">
                 <img id="previewImage" src="" alt="Preview">
@@ -455,7 +98,7 @@
                 <div class="upload-progress" id="albumUploadProgress"></div>
                 <span class="progress-text" id="albumProgressText"></span>
                 <div class="upload-icon">📚</div>
-                <p class="upload-text"><span style="color: #53ffee;">Click</span> or <span style="color: #8e6dff;">Drag & Drop</span> to select multiple files</p>
+                <p class="upload-text"><span style="color: #60a5fa;">Click</span> or <span style="color: #a78bfa;">Drag & Drop</span> to select multiple files</p>
                 <input type="file" id="albumFileInput" style="display: none;" multiple>
             </div>
 
@@ -484,6 +127,9 @@
             </div>
 
             <button class="btn" id="createAlbumBtn">Create Album</button>
+            <div class="usage-count" id="albumUsageCount">
+                <i>📊</i> Used <span id="albumUsageCountNumber">0</span> times
+            </div>
 
             <div class="album-files" id="albumFilesList">
                 <p>Selected Files:</p>
@@ -518,21 +164,49 @@
             </div>
 
             <button class="btn" id="uploadUrlBtn">Upload from URL</button>
+            <div class="usage-count" id="urlUsageCount">
+                <i>📊</i> Used <span id="urlUsageCountNumber">0</span> times
+            </div>
         </div>
 
         <!-- Results Section (Shared across all tabs) -->
         <div class="file-link" id="fileLink">
-            <p style="margin-bottom: 0.3rem; color: #53ffee;">Your link:</p>
-            <div style="display: flex; align-items: center; justify-content: center;">
+            <p style="margin-bottom: 0.3rem; color: #60a5fa;">Your link:</p>
+            <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap;">
                 <a id="generatedLink" href="#" target="_blank"></a>
                 <button class="copy-btn" id="copyBtn" title="Copy link">Copy</button>
             </div>
         </div>
 
         <div class="support-section">
-            <p style="color: #c1c9f5; margin-bottom: 0.3rem;">Support Channels</p>
-            <a href="https://t.me/ALL1N_0NE/109" class="support-btn" target="_blank">Join Telegram 1</a>
-            <a href="http://t.me/combohamserdailys" class="support-btn" target="_blank">Join Telegram 2</a>
+            <p style="color: #c7d2fe; margin-bottom: 0.3rem;">Support Channels</p>
+            <a href="https://t.me/ALL1N_0NE" class="support-btn" target="_blank">Join Telegram 1</a>
+            <a href="https://t.me/combohamsterdailys" class="support-btn" target="_blank">Join Telegram 2</a>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <button class="settings-toggle" id="settingsToggle">⚙️</button>
+    <div class="settings-panel" id="settingsPanel">
+        <h3 class="settings-title">Customize Appearance</h3>
+        
+        <div class="settings-group">
+            <label class="settings-label">Background Image URL:</label>
+            <input type="text" id="bgImageUrl" class="settings-input" placeholder="https://example.com/image.jpg">
+            <button id="applyBgImage" class="btn" style="margin-top: 0.5rem; padding: 0.5rem; width: 100%;">Apply Background</button>
+            <button id="removeBgImage" class="btn" style="margin-top: 0.5rem; padding: 0.5rem; width: 100%; background: linear-gradient(90deg, #f472b6, #ec4899);">Remove Background</button>
+        </div>
+        
+        <div class="settings-group">
+            <label class="settings-label">Logo Image URL:</label>
+            <input type="text" id="logoImageUrl" class="settings-input" placeholder="https://example.com/logo.png">
+            <button id="applyLogoImage" class="btn" style="margin-top: 0.5rem; padding: 0.5rem; width: 100%;">Apply Logo</button>
+            <button id="resetLogoImage" class="btn" style="margin-top: 0.5rem; padding: 0.5rem; width: 100%; background: linear-gradient(90deg, #f472b6, #ec4899);">Reset Logo</button>
+        </div>
+        
+        <div class="settings-group">
+            <label class="settings-label">Background Opacity:</label>
+            <input type="range" id="bgOpacity" class="settings-input" min="0" max="100" value="15">
         </div>
     </div>
 
@@ -559,6 +233,23 @@
         const albumUploadProgress = document.getElementById('albumUploadProgress');
         const fileProgressText = document.getElementById('fileProgressText');
         const albumProgressText = document.getElementById('albumProgressText');
+        const fileViews = document.getElementById('fileViews');
+        const albumViews = document.getElementById('albumViews');
+        const urlViews = document.getElementById('urlViews');
+        const fileUsageCountNumber = document.getElementById('fileUsageCountNumber');
+        const albumUsageCountNumber = document.getElementById('albumUsageCountNumber');
+        const urlUsageCountNumber = document.getElementById('urlUsageCountNumber');
+        const settingsToggle = document.getElementById('settingsToggle');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const bgImageUrl = document.getElementById('bgImageUrl');
+        const applyBgImage = document.getElementById('applyBgImage');
+        const removeBgImage = document.getElementById('removeBgImage');
+        const logoImageUrl = document.getElementById('logoImageUrl');
+        const applyLogoImage = document.getElementById('applyLogoImage');
+        const resetLogoImage = document.getElementById('resetLogoImage');
+        const bgOpacity = document.getElementById('bgOpacity');
+        const bgImage = document.getElementById('bgImage');
+        const logoImage = document.getElementById('logoImage');
 
         // Configuration
         const config = {
@@ -567,13 +258,59 @@
             bannedExtensions: ['.exe', '.scr', '.cpl', '.doc', '.docx', '.jar']
         };
 
+        // View Counters
+        let viewCounts = {
+            file: localStorage.getItem('fileViews') ? parseInt(localStorage.getItem('fileViews')) : 0,
+            album: localStorage.getItem('albumViews') ? parseInt(localStorage.getItem('albumViews')) : 0,
+            url: localStorage.getItem('urlViews') ? parseInt(localStorage.getItem('urlViews')) : 0
+        };
+
+        // Usage Counters
+        let usageCounts = {
+            file: localStorage.getItem('fileUsage') ? parseInt(localStorage.getItem('fileUsage')) : 0,
+            album: localStorage.getItem('albumUsage') ? parseInt(localStorage.getItem('albumUsage')) : 0,
+            url: localStorage.getItem('urlUsage') ? parseInt(localStorage.getItem('urlUsage')) : 0
+        };
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            updateViewCounters();
+            updateUsageCounters();
             setupTabs();
             setupFileUpload();
             setupAlbumUpload();
             setupUrlUpload();
+            setupSettings();
+            loadSavedSettings();
         });
+
+        // Update view counters display
+        function updateViewCounters() {
+            fileViews.textContent = viewCounts.file.toLocaleString();
+            albumViews.textContent = viewCounts.album.toLocaleString();
+            urlViews.textContent = viewCounts.url.toLocaleString();
+        }
+
+        // Update usage counters display
+        function updateUsageCounters() {
+            fileUsageCountNumber.textContent = usageCounts.file.toLocaleString();
+            albumUsageCountNumber.textContent = usageCounts.album.toLocaleString();
+            urlUsageCountNumber.textContent = usageCounts.url.toLocaleString();
+        }
+
+        // Increment view counter for a tab
+        function incrementViewCounter(tab) {
+            viewCounts[tab]++;
+            localStorage.setItem(`${tab}Views`, viewCounts[tab]);
+            updateViewCounters();
+        }
+
+        // Increment usage counter for a tab
+        function incrementUsageCounter(tab) {
+            usageCounts[tab]++;
+            localStorage.setItem(`${tab}Usage`, usageCounts[tab]);
+            updateUsageCounters();
+        }
 
         // Tab Switching
         function setupTabs() {
@@ -591,6 +328,9 @@
                     
                     // Hide results when switching tabs
                     fileLink.style.display = 'none';
+                    
+                    // Increment view counter for the tab
+                    incrementViewCounter(tab.dataset.tab);
                 });
             });
         }
@@ -634,6 +374,9 @@
                 
                 // Validate file
                 if (!validateFile(file)) return;
+                
+                // Increment counters
+                incrementUsageCounter('file');
                 
                 await uploadFile(file);
             });
@@ -679,6 +422,9 @@
                     if (!validateFile(albumFileInput.files[i])) return;
                 }
                 
+                // Increment counters
+                incrementUsageCounter('album');
+                
                 await createAlbum();
             });
         }
@@ -692,6 +438,9 @@
                     return;
                 }
                 
+                // Increment counters
+                incrementUsageCounter('url');
+                
                 await uploadFromUrl(fileUrl);
             });
         }
@@ -704,6 +453,94 @@
                 setTimeout(() => copyBtn.textContent = 'Copy', 1800);
             });
         });
+
+        // Settings Panel
+        function setupSettings() {
+            settingsToggle.addEventListener('click', () => {
+                settingsPanel.classList.toggle('show');
+            });
+
+            // Background Image
+            applyBgImage.addEventListener('click', () => {
+                const url = bgImageUrl.value.trim();
+                if (url) {
+                    bgImage.src = url;
+                    bgImage.style.display = 'block';
+                    localStorage.setItem('bgImageUrl', url);
+                }
+            });
+
+            removeBgImage.addEventListener('click', () => {
+                bgImage.src = '';
+                bgImage.style.display = 'none';
+                localStorage.removeItem('bgImageUrl');
+            });
+
+            // Logo Image
+            applyLogoImage.addEventListener('click', () => {
+                const url = logoImageUrl.value.trim();
+                if (url) {
+                    logoImage.src = url;
+                    localStorage.setItem('logoImageUrl', url);
+                }
+            });
+
+            resetLogoImage.addEventListener('click', () => {
+                logoImage.src = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/cloud-upload.svg';
+                localStorage.removeItem('logoImageUrl');
+            });
+
+            // Background Opacity
+            bgOpacity.addEventListener('input', () => {
+                const opacity = bgOpacity.value / 100;
+                bgImage.style.opacity = opacity;
+                localStorage.setItem('bgOpacity', bgOpacity.value);
+            });
+        }
+
+        // Load saved settings
+        function loadSavedSettings() {
+            // Background Image
+            const savedBgImage = localStorage.getItem('bgImageUrl');
+            if (savedBgImage) {
+                bgImage.src = savedBgImage;
+                bgImage.style.display = 'block';
+                bgImageUrl.value = savedBgImage;
+            }
+
+            // Logo Image
+            const savedLogoImage = localStorage.getItem('logoImageUrl');
+            if (savedLogoImage) {
+                logoImage.src = savedLogoImage;
+                logoImageUrl.value = savedLogoImage;
+            }
+
+            // Background Opacity
+            const savedOpacity = localStorage.getItem('bgOpacity');
+            if (savedOpacity) {
+                bgOpacity.value = savedOpacity;
+                bgImage.style.opacity = savedOpacity / 100;
+            }
+
+            // Load usage counts
+            const savedFileUsage = localStorage.getItem('fileUsage');
+            if (savedFileUsage) {
+                usageCounts.file = parseInt(savedFileUsage);
+                fileUsageCountNumber.textContent = usageCounts.file.toLocaleString();
+            }
+
+            const savedAlbumUsage = localStorage.getItem('albumUsage');
+            if (savedAlbumUsage) {
+                usageCounts.album = parseInt(savedAlbumUsage);
+                albumUsageCountNumber.textContent = usageCounts.album.toLocaleString();
+            }
+
+            const savedUrlUsage = localStorage.getItem('urlUsage');
+            if (savedUrlUsage) {
+                usageCounts.url = parseInt(savedUrlUsage);
+                urlUsageCountNumber.textContent = usageCounts.url.toLocaleString();
+            }
+        }
 
         // Update progress bar
         function updateProgress(progressElement, progressTextElement, progress) {
@@ -1179,7 +1016,7 @@
             message.className = 'upload-message';
             message.style.marginTop = '8px';
             message.style.fontSize = '0.85rem';
-            message.style.color = serviceUsed === 'Original URL' ? '#ffb86b' : '#53ffee';
+            message.style.color = serviceUsed === 'Original URL' ? '#f472b6' : '#60a5fa';
             message.textContent = serviceUsed === 'Original URL' 
                 ? 'Using original URL (all shorteners failed)' 
                 : `Shortened via ${serviceUsed}`;
